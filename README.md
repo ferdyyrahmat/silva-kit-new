@@ -1,61 +1,230 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎨 Silva Kit
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> A modern **Laravel 12** admin panel starter kit built with the [Silva Admin Template](https://zoyothemes.com/silva/html/) by Zoyothemes. Equipped with essential system modules, beautiful UI, and developer-friendly architecture — ready for rapid development.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📸 Preview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Dashboard | Profile |
+|-----------|---------|
+| ![Dashboard](public/images/preview/dashboard.png) | ![Profile](public/images/preview/profile.png) |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Laravel 12, PHP 8.2+ |
+| **Frontend** | Bootstrap 5.3, SCSS, Vite |
+| **Database** | MySQL / SQLite |
+| **DataTables** | Yajra DataTables (Server-side) |
+| **UI Template** | Silva Admin by Zoyothemes |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📦 Installation
 
-## Laravel Sponsors
+### Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP >= 8.2
+- Composer
+- Node.js >= 18 & npm
+- MySQL
 
-### Premium Partners
+### Step-by-step
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+# 1. Clone the repository
+git clone https://github.com/ferdyyrahmat/silva-kit-new.git
+cd silva-kit-new
 
-## Contributing
+# 2. Install PHP dependencies
+composer install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 3. Install Node.js dependencies
+npm install
 
-## Code of Conduct
+# 4. Copy environment file
+cp .env.example .env
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 5. Generate application key
+php artisan key:generate
 
-## Security Vulnerabilities
+# 6. Configure your database in .env
+#    For MySQL:
+#    DB_CONNECTION=mysql
+#    DB_HOST=127.0.0.1
+#    DB_PORT=3306
+#    DB_DATABASE=silva_kit
+#    DB_USERNAME=root
+#    DB_PASSWORD=
+#
+#    For SQLite (default):
+#    DB_CONNECTION=sqlite
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 7. Run database migrations
+php artisan migrate
 
-## License
+# 8. Seed default data (admin user, permissions, etc.)
+php artisan db:seed
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 9. Create storage symlink
+php artisan storage:link
+
+# 10. Build frontend assets
+npm run build
+
+# 11. Start the development server
+php artisan serve
+```
+
+### Development Mode (Hot Reload)
+
+```bash
+# Run Vite dev server for hot module replacement
+npm run dev
+
+# In a separate terminal, run Laravel server
+php artisan serve
+```
+
+---
+
+## 🌟 Global Features
+
+### 🔐 Authentication System
+- Login, Register, Logout
+- Lock Screen with session-based PIN
+- Password hashing with Bcrypt
+
+### 👤 User Profile Management
+- View & edit profile information (name, email, phone, location, avatar)
+- Change password with current password validation
+- Avatar upload with auto center-crop (1:1 circle)
+- Profile accessible to all authenticated users via `/v1/profile`
+
+### 👥 User Management (Admin)
+- CRUD users with server-side DataTables
+- Assign roles & permissions to users
+
+### 🔑 Role & Permission System
+- Dynamic permission-based access control
+- Permission middleware (`check_permission`) on all admin routes
+- CRUD permissions via admin panel
+
+### 🌙 Dark Mode
+- Toggle between Light and Dark themes
+- Theme preference saved in session (persists across pages)
+- Fully styled dark mode across all components
+
+### 🌐 Multi-Language (i18n)
+- Switch between **Bahasa Indonesia (ID)** and **English (EN)**
+- Language toggle in topbar (click to switch, no dropdown)
+- Language preference saved in session
+- Translation files located in `lang/id/` and `lang/en/`
+
+### 🔍 Global Search
+- Search bar in topbar with real-time AJAX suggestions
+- Searches across menu items and application pages
+- Click on a result to navigate directly to the page
+
+### 📊 DataTables Integration
+- Server-side rendering with Yajra DataTables
+- Supports sorting, pagination, and search
+- Responsive design for mobile devices
+
+### 🎨 SweetAlert2 Integration
+- Modern, themed alert dialogs matching the Silva template style
+- Used for confirmations, success messages, and error handling
+- Custom dark mode support
+
+### 🔔 Notification Management (Admin)
+- CRUD notifications via admin panel
+
+### 🛠 Maintenance Management (Admin)
+- CRUD maintenance schedules via admin panel
+
+### 💬 Feedback Management (Admin)
+- CRUD feedback entries via admin panel
+
+---
+
+## 📁 Project Structure
+
+```
+silva-kit-new/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/             # Login, Register, Lockscreen
+│   │   │   ├── Dashboard/        # Dashboard controller
+│   │   │   └── System/           # System modules
+│   │   │       ├── Feedback/
+│   │   │       ├── Language/      # Language & Theme toggle
+│   │   │       ├── Maintenance/
+│   │   │       ├── Notification/
+│   │   │       ├── Permission/
+│   │   │       ├── Profile/       # Profile controller
+│   │   │       ├── Search/        # Global search controller
+│   │   │       └── User/
+│   │   └── Middleware/
+│   │       ├── CheckLockscreen.php
+│   │       ├── CheckPermission.php
+│   │       └── SetLocale.php
+│   └── Models/
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── lang/
+│   ├── en/                       # English translations
+│   └── id/                       # Indonesian translations
+├── resources/
+│   ├── scss/                     # Custom SCSS styles
+│   └── views/
+│       ├── admin/                # Admin module views
+│       ├── auth/                 # Auth views
+│       └── layouts/              # Layout & partials
+├── routes/
+│   ├── web.php                   # Main routes
+│   ├── auth.php                  # Auth routes
+│   └── partials/
+│       ├── admin.php             # Admin-only routes
+│       └── user.php              # General user routes
+└── public/
+    └── images/
+```
+
+---
+
+## 🔄 Last Update
+
+**Date:** 24 July 2026
+
+### ✨ What's New
+- ✅ **Dark Mode** — Full dark/light theme toggle with session persistence
+- ✅ **Multi-Language (i18n)** — ID/EN language switcher with click-to-toggle UI
+- ✅ **Global Search** — Real-time AJAX search bar with direct navigation
+- ✅ **SweetAlert2 Modern Styling** — Themed alerts matching Silva template design
+- ✅ **Profile Refactor** — Profile routes moved to `v1.profile.*` (accessible by all users)
+- ✅ **Avatar Upload** — Center-cropped circular avatar with `object-fit: cover`
+- ✅ **Lock Screen Avatar** — Dynamic avatar on lock screen page
+- ✅ **Profile Tabs** — Styled to match original Silva template tab design
+- ✅ **README Overhaul** — Complete documentation rewrite
+
+---
+
+## 👨‍💻 Author
+
+**Ferdy Rahmat**
+
+- GitHub: [@ferdyyrahmat](https://github.com/ferdyyrahmat)
+
+---
+
+## 📄 License
+
+This project is built on top of the [Laravel Framework](https://laravel.com/) which is open-sourced software licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+The Silva Admin Template is a product of [Zoyothemes](https://zoyothemes.com/).
