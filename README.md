@@ -4,14 +4,6 @@
 
 ---
 
-## 📸 Preview
-
-| Dashboard | Profile |
-|-----------|---------|
-| ![Dashboard](public/images/preview/dashboard.png) | ![Profile](public/images/preview/profile.png) |
-
----
-
 ## 🚀 Tech Stack
 
 | Layer | Technology |
