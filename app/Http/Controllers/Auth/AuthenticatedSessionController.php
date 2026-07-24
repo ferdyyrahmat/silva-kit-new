@@ -37,12 +37,14 @@ class AuthenticatedSessionController extends Controller
         $user = User::where('email', $request->email)->first();
         if(!empty($user)){
             if(Auth::attempt($kredensil)){
+                audit_log('User logged in successfully', 'auth.login', 'auth');
                 return response()->json([
                     'success' => true,
                     'message' => 'Selamat Datang di Panel Administrator',
                     'redirect' => route('root'),
                 ]);
             }else{
+                audit_log('Failed login attempt for email: ' . $request->email, 'auth.failed', 'auth');
                 return response()->json([
                     'success' => false,
                     'message' => 'Email atau Password yang Anda masukan salah. Silakan coba lagi.',
@@ -50,6 +52,7 @@ class AuthenticatedSessionController extends Controller
                 ]);
             }
         }else{
+            audit_log('Failed login attempt for non-existent email: ' . $request->email, 'auth.failed', 'auth');
             return response()->json([
                 'success' => false,
                 'message' => 'Email atau Password yang Anda masukan salah. Silakan coba lagi.',
@@ -66,6 +69,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request)
     {
+        if (Auth::check()) {
+            audit_log('User logged out', 'auth.logout', 'auth');
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

@@ -29,6 +29,12 @@ class MaintenanceController extends Controller
         SystemSetting::setByKey('maintenance_title', $request->title, 'string', 'Title shown on maintenance page.');
         SystemSetting::setByKey('maintenance_message', $request->message, 'string', 'Message shown on maintenance page.');
 
+        $statusStr = $request->status ? 'ON' : 'OFF';
+        \App\Models\AuditLog::log('maintenance.update', "Updated maintenance settings (Status: {$statusStr})", 'maintenance', [
+            'status' => $statusStr,
+            'title'  => $request->title
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Maintenance settings updated successfully!',

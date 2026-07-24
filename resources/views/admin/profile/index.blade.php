@@ -118,7 +118,12 @@
                 <div class="card-body pt-0">
                     <ul class="nav nav-underline border-bottom pt-2" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active p-2" data-bs-toggle="tab" href="#tab-personal" role="tab">
+                            <a class="nav-link active p-2" data-bs-toggle="tab" href="#tab-notifications" id="tab-notifications-header" role="tab">
+                                Notifications Inbox <span class="badge bg-danger rounded-circle ms-1" id="profile-noti-badge" style="{{ $notifications->where('is_read', false)->count() > 0 ? '' : 'display:none;' }}">{{ $notifications->where('is_read', false)->count() }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link p-2" data-bs-toggle="tab" href="#tab-personal" role="tab">
                                 Personal Details
                             </a>
                         </li>
@@ -135,12 +140,60 @@
                     </ul>
 
                     <div class="tab-content text-muted bg-white pt-3">
+
+                        <!-- TAB 1: All Notifications -->
+                        <div class="tab-pane fade show active" id="tab-notifications" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h5 class="fw-semibold mb-1">Notification Inbox</h5>
+                                    <p class="text-muted fs-13 mb-0">All activity logs and system notifications sent to your account.</p>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="btn-clear-profile-noti">
+                                    <i class="mdi mdi-delete-sweep-outline me-1"></i>Clear All Notifications
+                                </button>
+                            </div>
+
+                            <div class="list-group list-group-flush border rounded-2 overflow-hidden" id="profile-noti-container">
+                                @forelse($notifications as $noti)
+                                    <div class="list-group-item p-3 {{ $noti->is_read ? 'bg-white' : 'bg-light bg-opacity-50' }} border-bottom position-relative noti-profile-item" id="noti-item-{{ $noti->id }}">
+                                        <div class="d-flex align-items-start gap-3 pe-4">
+                                            <div class="avatar-sm flex-shrink-0">
+                                                <span class="avatar-title bg-primary-subtle text-primary rounded-circle fs-20 p-2">
+                                                    <i class="mdi {{ $noti->icon ?? 'mdi-bell-outline' }}"></i>
+                                                </span>
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                                    <h6 class="mb-0 fw-semibold text-dark fs-14">
+                                                        <a href="{{ $noti->url ?? 'javascript:void(0);' }}" onclick="markNotificationRead({{ $noti->id }}, '{{ $noti->url }}')" class="text-dark">
+                                                            {{ $noti->title }}
+                                                        </a>
+                                                        @if(!$noti->is_read)
+                                                            <span class="badge bg-danger rounded-circle p-1 ms-1" style="width: 8px; height: 8px;"> </span>
+                                                        @endif
+                                                    </h6>
+                                                    <span class="text-muted fs-12"><i class="mdi mdi-clock-outline me-1"></i>{{ $noti->created_at ? $noti->created_at->diffForHumans() : 'Just now' }}</span>
+                                                </div>
+                                                <p class="text-muted mb-0 fs-13">{{ $noti->message }}</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm text-muted position-absolute top-0 end-0 me-2 mt-2 border-0" onclick="deleteSingleNotification(event, {{ $noti->id }})" title="Remove notification" style="background: transparent;">
+                                            <i class="mdi mdi-close fs-16"></i>
+                                        </button>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-5">
+                                        <i class="mdi mdi-bell-off-outline text-muted fs-36"></i>
+                                        <p class="text-muted fs-14 mt-2 mb-0">No notifications found in your inbox.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
                         
-                        <!-- TAB 1: Personal Details -->
-                        <div class="tab-pane fade show active" id="tab-personal" role="tabpanel">
+                        <!-- TAB 2: Personal Details -->
+                        <div class="tab-pane fade" id="tab-personal" role="tabpanel">
                             <form id="profile-info-form" action="{{ route('v1.profile.update-info') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                @method('PUT')
                                 
                                 <input type="file" id="avatar-file-input" name="avatar" class="d-none" accept="image/*">
 
@@ -179,12 +232,10 @@
                             </form>
                         </div>
 
-                        <!-- TAB 2: Security & Password -->
+                        <!-- TAB 3: Security & Password -->
                         <div class="tab-pane fade" id="tab-security" role="tabpanel">
                             <form id="profile-password-form" action="{{ route('v1.profile.update-password') }}" method="POST">
                                 @csrf
-                                @method('PUT')
-
                                 <div class="row mb-3">
                                     <div class="col-md-6 offset-md-3 mb-3">
                                         <label for="current_password" class="form-label fw-medium">Current Password</label>
@@ -216,7 +267,7 @@
                             </form>
                         </div>
 
-                        <!-- TAB 3: Permissions Matrix -->
+                        <!-- TAB 4: Permissions Matrix -->
                         <div class="tab-pane fade" id="tab-permissions" role="tabpanel">
                             <div class="row mb-3">
                                 <div class="col-12">
@@ -316,33 +367,64 @@
         });
 
         // Submit Security Password form via AJAX
-        $('#profile-password-form').on('submit', function(e) {
+        $('#profile-password-form').off('submit').on('submit', function(e) {
             e.preventDefault();
+            e.stopImmediatePropagation();
             var form = $(this);
             var btn = $('#btn-save-password');
 
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Updating...');
 
+            var formData = form.serialize();
+
             $.ajax({
                 url: form.attr('action'),
                 type: 'POST',
-                data: form.serialize(),
+                data: formData,
                 success: function(response) {
                     btn.prop('disabled', false).html('<i class="mdi mdi-key-change me-1"></i>Update Password');
                     if (response.success) {
-                        Swal.fire('Updated!', response.message, 'success');
+                        Swal.fire({ icon: 'success', title: 'Updated!', text: response.message });
                         form[0].reset();
                     } else {
-                        Swal.fire('Failed!', response.message, 'error');
+                        Swal.fire({ icon: 'warning', title: 'Failed!', text: response.message });
                     }
                 },
                 error: function(xhr) {
                     btn.prop('disabled', false).html('<i class="mdi mdi-key-change me-1"></i>Update Password');
-                    var msg = xhr.responseJSON?.message || 'Failed to update password.';
-                    Swal.fire('Error!', msg, 'error');
+                    var json = xhr.responseJSON;
+                    var msg = (json && json.errors) 
+                        ? Object.values(json.errors).flat().join('\n') 
+                        : (json?.message || 'Failed to update password.');
+                    Swal.fire({ icon: 'error', title: 'Error!', text: msg });
                 }
             });
         });
+
+        // Clear All notifications button inside Profile Notifications tab
+        $('#btn-clear-profile-noti').on('click', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{{ route('notifications.bell.clear') }}",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function() {
+                    $('#profile-noti-container').html('<div class="text-center py-5"><i class="mdi mdi-bell-off-outline text-muted fs-36"></i><p class="text-muted fs-14 mt-2 mb-0">No notifications found in your inbox.</p></div>');
+                    $('#profile-noti-badge').hide();
+                    if (typeof fetchNotifications === 'function') {
+                        fetchNotifications();
+                    }
+                }
+            });
+        });
+
+        // Check hash in URL to switch active tab automatically (e.g. #tab-notifications)
+        if (window.location.hash) {
+            var activeTab = $('a[href="' + window.location.hash + '"]');
+            if (activeTab.length) {
+                activeTab.tab('show');
+            }
+        }
     });
 </script>
 @endsection

@@ -86,6 +86,19 @@ class UserController extends Controller
             $user->roles()->sync($request->roles);
         }
 
+        \App\Models\AuditLog::log('user.create', "Created user '{$user->name}' ({$user->email})", 'user', ['user_id' => $user->id]);
+
+        // Send welcome notification to created user
+        $roleNames = $user->roles->pluck('name')->join(', ') ?: 'User';
+        \App\Models\SystemNotification::send(
+            $user,
+            'Account Created',
+            "Your account has been created with role(s): {$roleNames}.",
+            'success',
+            'mdi-account-check-outline',
+            route('v1.profile.index')
+        );
+
         return response()->json([
             'success' => true,
             'message' => 'User created successfully!',
@@ -105,6 +118,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        $oldRoleIds = $user->roles->pluck('id')->sort()->values()->toArray();
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -125,7 +139,26 @@ class UserController extends Controller
 
         $user->update($updateData);
 
-        $user->roles()->sync($request->roles ?? []);
+        $newRoles = $request->roles ?? [];
+        $user->roles()->sync($newRoles);
+
+        $user->load('roles');
+        $newRoleNames = $user->roles->pluck('name')->join(', ') ?: 'No Role';
+
+        \App\Models\AuditLog::log('user.update', "Updated user '{$user->name}'", 'user', [
+            'target_user_id' => $user->id,
+            'roles' => $newRoleNames
+        ]);
+
+        // Send Bell Notification to the target user if roles were changed or account updated
+        \App\Models\SystemNotification::send(
+            $user,
+            'Role & Profile Updated',
+            "Your profile/role has been updated by administrator. Your assigned role(s): {$newRoleNames}.",
+            'role_update',
+            'mdi-shield-account-outline',
+            route('v1.profile.index')
+        );
 
         return response()->json([
             'success' => true,
@@ -137,7 +170,10 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+        $deletedName = $user->name;
         $user->delete();
+
+        \App\Models\AuditLog::log('user.delete', "Deleted user '{$deletedName}'", 'user', ['user_id' => $id]);
 
         return response()->json([
             'success' => true,

@@ -103,6 +103,20 @@ class PermissionController extends Controller
             $role->users()->sync($request->users);
         }
 
+        \App\Models\AuditLog::log('role.create', "Created role '{$role->name}'", 'role');
+
+        // Notify assigned users
+        foreach ($role->users as $u) {
+            \App\Models\SystemNotification::send(
+                $u,
+                'Role Assigned',
+                "You have been assigned to role: {$role->name}.",
+                'role_update',
+                'mdi-shield-check-outline',
+                route('v1.profile.index')
+            );
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Role and Permissions created successfully!',
@@ -159,6 +173,21 @@ class PermissionController extends Controller
         $role->permissions()->sync($permissionIds);
 
         $role->users()->sync($request->users ?? []);
+        $role->load('users');
+
+        \App\Models\AuditLog::log('role.update', "Updated role '{$role->name}' permissions/users", 'role');
+
+        // Notify all users in this role
+        foreach ($role->users as $u) {
+            \App\Models\SystemNotification::send(
+                $u,
+                'Role & Permissions Updated',
+                "Your role '{$role->name}' or its granted permissions have been updated.",
+                'role_update',
+                'mdi-shield-sync-outline',
+                route('v1.profile.index')
+            );
+        }
 
         return response()->json([
             'success' => true,
@@ -170,7 +199,10 @@ class PermissionController extends Controller
     public function destroy($id)
     {
         $role = Role::findOrFail($id);
+        $roleName = $role->name;
         $role->delete();
+
+        \App\Models\AuditLog::log('role.delete', "Deleted role '{$roleName}'", 'role');
 
         return response()->json([
             'success' => true,
@@ -186,6 +218,11 @@ class PermissionController extends Controller
         foreach ($routes as $route) {
             $name = $route->getName();
             if ($name && (Str::startsWith($name, 'admin.') || Str::startsWith($name, 'v1.'))) {
+                // Skip profile and dashboard routes which are accessible to all users
+                if (Str::startsWith($name, 'v1.profile.') || $name === 'v1.dashboard') {
+                    continue;
+                }
+
                 $parts = explode('.', $name);
                 
                 if (count($parts) >= 3) {

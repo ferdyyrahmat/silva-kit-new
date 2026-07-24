@@ -25,6 +25,12 @@
     </a>
 </li>
 <li>
+    <a href="{{ route('admin.audit-logs.index') }}" class="tp-link">
+        <i data-feather="clock"></i>
+        <span> Audit Trail </span>
+    </a>
+</li>
+<li>
     <a href="{{ route('admin.feedbacks.index') }}" class="tp-link">
         <i data-feather="inbox"></i>
         <span> Feedbacks </span>

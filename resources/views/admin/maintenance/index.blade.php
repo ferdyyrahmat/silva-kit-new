@@ -44,7 +44,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <small class="text-muted d-block mt-1">When turned ON, only users with **Administrator** or **RCID** roles can access the app. Other users will see the Maintenance Page.</small>
+                            <small class="text-muted d-block mt-1">When turned ON, only users with <b>Administrator</b> roles can access the app. Other users will see the Maintenance Page.</small>
                         </div>
 
                         <!-- Maintenance Title -->

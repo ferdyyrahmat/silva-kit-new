@@ -140,13 +140,22 @@ php artisan serve
 - Used for confirmations, success messages, and error handling
 - Custom dark mode support
 
-### 🔔 Notification Management (Admin)
-- CRUD notifications via admin panel
+### 🔔 Notification Bell & Inbox System
+- Real-time bell notification updates with unread count badge & AJAX polling
+- Automatic notification trigger when administrator assigns/updates user roles
+- Interactive dropdown menu with single item removal (`x`) and **Clear All** action
+- Integrated **All Notifications Inbox** tab inside user profile page (`/v1/profile#tab-notifications`)
+- Global helper function `send_notification($title, $message, $url)` for effortless notification sending anywhere in the app
+
+### 📜 Audit Trail System
+- Comprehensive activity logging for login/logout, user creation/updates, role assignments, password changes, and maintenance toggles
+- Dedicated DataTables view (`/admin/audit-logs`) for system administrators
+- Global helper function `audit_log($description)` with auto event-detection and actor mapping
 
 ### 🛠 Maintenance Mode
 - ON/OFF toggle switch for maintenance mode in settings panel
 - Customizable maintenance title and message information
-- Exclude/bypass **Administrator** and **RCID** roles automatically
+- Exclude/bypass **Administrator** role automatically
 - Non-authorized users will be presented with a beautiful, themed `pages-maintenance` view
 - Persisted dynamically in database utilizing `system_settings` table
 
@@ -160,15 +169,18 @@ php artisan serve
 ```
 silva-kit-new/
 ├── app/
+│   ├── Helpers/
+│   │   └── helpers.php           # Global helper functions (send_notification, audit_log)
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Auth/             # Login, Register, Lockscreen
 │   │   │   ├── Dashboard/        # Dashboard controller
 │   │   │   └── System/           # System modules
+│   │   │       ├── AuditLog/     # Audit Trail controller
 │   │   │       ├── Feedback/
 │   │   │       ├── Language/      # Language & Theme toggle
 │   │   │       ├── Maintenance/
-│   │   │       ├── Notification/
+│   │   │       ├── Notification/ # Bell & Blast notification controllers
 │   │   │       ├── Permission/
 │   │   │       ├── Profile/       # Profile controller
 │   │   │       ├── Search/        # Global search controller
@@ -179,8 +191,10 @@ silva-kit-new/
 │   │       ├── CheckPermission.php
 │   │       └── SetLocale.php
 │   └── Models/
+│       ├── AuditLog.php
 │       ├── Permission.php
 │       ├── Role.php
+│       ├── SystemNotification.php
 │       ├── SystemSetting.php
 │       └── User.php
 ├── database/
@@ -219,9 +233,11 @@ silva-kit-new/
 - ✅ **Profile Refactor** — Profile routes moved to `v1.profile.*` (accessible by all users)
 - ✅ **Avatar Upload** — Center-cropped circular avatar with `object-fit: cover`
 - ✅ **Lock Screen Avatar** — Dynamic avatar on lock screen page
-- ✅ **Profile Tabs** — Styled to match original Silva template tab design
-- ✅ **Maintenance Mode** — On/Off configuration settings panel with dynamic custom info (title & message) allowing bypass only for Administrator/RCID roles
-- ✅ **README Overhaul** — Complete documentation rewrite
+- ✅ **Profile Tabs & Inbox** — Includes Personal Details, Security & Password, Granted Access Matrix, and **All Notifications Inbox**
+- ✅ **Global Helpers** — Easy-to-use `send_notification()` and `audit_log()` functions registered globally in Composer
+- ✅ **Notification Bell System** — Real-time notification updates for user role changes, profile updates, with unread count badge & AJAX polling
+- ✅ **Audit Trail System** — Comprehensive activity logging for login/logout, user creation/updates, role assignments, and maintenance toggles with dedicated DataTables view (`/admin/audit-logs`)
+- ✅ **Maintenance Mode** — On/Off configuration settings panel allowing login gate bypass only for **Administrator** role
 
 ---
 

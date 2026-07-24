@@ -62,6 +62,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    public function notifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SystemNotification::class);
+    }
+
+    public function auditLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
     public function hasPermission(string $routeName): bool
     {
         return $this->roles()->whereHas('permissions', function ($query) use ($routeName) {

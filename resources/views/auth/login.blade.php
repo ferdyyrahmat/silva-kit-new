@@ -57,12 +57,12 @@
                                 @endif
                                 <div class="form-group mb-3">
                                     <label for="emailaddress" class="form-label">Email address</label>
-                                    <input class="form-control" type="email" name="email" id="emailaddress" value="test@example.com" required="" placeholder="Enter your email">
+                                    <input class="form-control" type="email" name="email" id="emailaddress" required="" placeholder="Enter your email">
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input class="form-control" type="password" required="" id="password" name="password" value="password" placeholder="Enter your password">
+                                    <input class="form-control" type="password" required="" id="password" name="password" placeholder="Enter your password">
                                 </div>
 
                                 <div class="form-group d-flex mb-3">

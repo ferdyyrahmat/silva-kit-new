@@ -92,125 +92,31 @@
                 </li>
 
                 <li class="dropdown notification-list topbar-dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false" id="topbar-bell-btn">
                         <i data-feather="bell" class="noti-icon"></i>
-                        <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
+                        <span class="badge bg-danger rounded-circle noti-icon-badge" id="topbar-bell-count" style="display: none;">0</span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-lg">
+                    <div class="dropdown-menu dropdown-menu-end dropdown-lg shadow-lg border mt-2">
 
                         <!-- item-->
                         <div class="dropdown-item noti-title">
                             <h5 class="m-0">
                                 <span class="float-end">
-                                    <a href="" class="text-dark">
+                                    <a href="javascript:void(0);" id="btn-clear-all-noti" class="text-dark">
                                         <small>{{ __('messages.clear_all') }}</small>
                                     </a>
                                 </span>{{ __('messages.notifications') }}
                             </h5>
                         </div>
 
-                        <div class="noti-scroll" data-simplebar>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary active">
-                                <div class="notify-icon">
-                                    <img src="/images/users/user-12.jpg" class="img-fluid rounded-circle" alt="" />
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <p class="notify-details">Carl Steadham</p>
-                                    <small class="text-muted">5 min ago</small>
-                                </div>
-                                <p class="mb-0 user-msg">
-                                    <small class="fs-14">Completed <span class="text-reset">Improve workflow in Figma</span></small>
-                                </p>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                <div class="notify-icon">
-                                    <img src="/images/users/user-2.jpg" class="img-fluid rounded-circle" alt="" />
-                                </div>
-                                <div class="notify-content">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="notify-details">Olivia McGuire</p>
-                                        <small class="text-muted">1 min ago</small>
-                                    </div>
-
-                                    <div class="d-flex mt-2 align-items-center">
-                                        <div class="notify-sub-icon">
-                                            <i class="mdi mdi-download-box text-dark"></i>
-                                        </div>
-
-                                        <div>
-                                            <p class="notify-details mb-0">dark-themes.zip</p>
-                                            <small class="text-muted">2.4 MB</small>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                <div class="notify-icon">
-                                    <img src="/images/users/user-3.jpg" class="img-fluid rounded-circle" alt="" />
-                                </div>
-                                <div class="notify-content">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="notify-details">Travis Williams</p>
-                                        <small class="text-muted">7 min ago</small>
-                                    </div>
-                                    <p class="noti-mentioned p-2 rounded-2 mb-0 mt-2"><span class="text-primary">@Patryk</span> Please make sure that you're....</p>
-                                </div>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                <div class="notify-icon">
-                                    <img src="/images/users/user-8.jpg" class="img-fluid rounded-circle" alt="" />
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <p class="notify-details">Violette Lasky</p>
-                                    <small class="text-muted">5 min ago</small>
-                                </div>
-                                <p class="mb-0 user-msg">
-                                    <small class="fs-14">Completed <span class="text-reset">Create new components</span></small>
-                                </p>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                <div class="notify-icon">
-                                    <img src="/images/users/user-5.jpg" class="img-fluid rounded-circle" alt="" />
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <p class="notify-details">Ralph Edwards</p>
-                                    <small class="text-muted">5 min ago</small>
-                                </div>
-                                <p class="mb-0 user-msg">
-                                    <small class="fs-14">Completed <span class="text-reset">Improve workflow in React</span></small>
-                                </p>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item text-muted link-primary">
-                                <div class="notify-icon">
-                                    <img src="/images/users/user-6.jpg" class="img-fluid rounded-circle" alt="" />
-                                </div>
-                                <div class="notify-content">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <p class="notify-details">Jocab jones</p>
-                                        <small class="text-muted">7 min ago</small>
-                                    </div>
-                                    <p class="noti-mentioned p-2 rounded-2 mb-0 mt-2"><span class="text-reset">@Patryk</span> Please make sure that you're....</p>
-                                </div>
-                            </a>
+                        <div class="noti-scroll" id="topbar-notifications-list" data-simplebar style="max-height: 300px; overflow-y: auto;">
+                            <div class="text-center py-3 text-muted fs-13">Loading notifications...</div>
                         </div>
 
                         <!-- All-->
-                        <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
+                        <a href="{{ route('v1.profile.index') }}#tab-notifications" class="dropdown-item text-center text-primary notify-item notify-all border-top">
                             {{ __('messages.view_all') }}
-                            <i class="fe-arrow-right"></i>
+                            <i class="mdi mdi-arrow-right ms-1"></i>
                         </a>
 
                     </div>
@@ -349,17 +255,113 @@
 
             // Hide dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
-                    searchDropdown.style.display = 'none';
-                }
+                // Hide dropdown on Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        searchDropdown.style.display = 'none';
+                    }
+                });
             });
+        }
+            // Live Notifications Bell AJAX Polling & Actions
+        function fetchNotifications() {
+            $.ajax({
+                url: "{{ route('notifications.bell.index') }}",
+                type: "GET",
+                success: function(res) {
+                    var countBadge = $('#topbar-bell-count');
+                    if (res.unreadCount > 0) {
+                        countBadge.text(res.unreadCount > 99 ? '99+' : res.unreadCount).show();
+                    } else {
+                        countBadge.hide();
+                    }
 
-            // Hide dropdown on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    searchDropdown.style.display = 'none';
+                    var listContainer = $('#topbar-notifications-list');
+                    if (res.notifications.length === 0) {
+                        listContainer.html('<div class="p-3 text-center text-muted fs-13"><i class="mdi mdi-bell-off-outline me-1"></i>No notifications yet</div>');
+                        return;
+                    }
+
+                    var html = '';
+                    res.notifications.forEach(function(item) {
+                        var bgClass = item.is_read ? '' : 'bg-light bg-opacity-50';
+                        var badgeDot = item.is_read ? '' : '<span class="badge bg-danger rounded-circle p-1 ms-2" style="width: 8px; height: 8px;"> </span>';
+
+                        html += '<div class="dropdown-item notify-item py-2 px-3 border-bottom position-relative ' + bgClass + '">';
+                        html += '<div class="d-flex align-items-start">';
+                        html += '<div class="notify-icon me-2 mt-1" onclick="markNotificationRead(' + item.id + ', \'' + item.url + '\')" style="cursor: pointer;">';
+                        html += '<i class="mdi ' + item.icon + ' fs-20 text-primary"></i>';
+                        html += '</div>';
+                        html += '<div class="flex-grow-1 overflow-hidden" onclick="markNotificationRead(' + item.id + ', \'' + item.url + '\')" style="cursor: pointer;">';
+                        html += '<div class="d-flex align-items-center justify-content-between mb-1 pe-3">';
+                        html += '<span class="fw-semibold text-dark fs-13 text-truncate">' + item.title + '</span>';
+                        html += '<div class="d-flex align-items-center"><small class="text-muted fs-11">' + item.time_ago + '</small>' + badgeDot + '</div>';
+                        html += '</div>';
+                        html += '<p class="mb-0 text-muted fs-12 text-wrap" style="line-height: 1.3;">' + item.message + '</p>';
+                        html += '</div>';
+                        html += '<button type="button" class="btn btn-sm text-muted p-0 ms-1 position-absolute top-0 end-0 me-2 mt-2 border-0" onclick="deleteSingleNotification(event, ' + item.id + ')" title="Remove notification" style="background: transparent;">';
+                        html += '<i class="mdi mdi-close fs-14"></i>';
+                        html += '</button>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+
+                    listContainer.html(html);
                 }
             });
         }
+
+        fetchNotifications();
+        setInterval(fetchNotifications, 15000); // Poll every 15 seconds
+
+        window.markNotificationRead = function(id, targetUrl) {
+            $.ajax({
+                url: "/notifications-bell/" + id + "/read",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function() {
+                    if (targetUrl && targetUrl !== 'javascript:void(0);') {
+                        window.location.href = targetUrl;
+                    } else {
+                        fetchNotifications();
+                    }
+                }
+            });
+        };
+
+        window.deleteSingleNotification = function(event, id) {
+            event.stopPropagation();
+            event.preventDefault();
+            $.ajax({
+                url: "/notifications-bell/" + id,
+                type: "DELETE",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function() {
+                    $('#noti-item-' + id).fadeOut(300, function() {
+                        $(this).remove();
+                        if ($('#profile-noti-container .noti-profile-item').length === 0) {
+                            $('#profile-noti-container').html('<div class="text-center py-5"><i class="mdi mdi-bell-off-outline text-muted fs-36"></i><p class="text-muted fs-14 mt-2 mb-0">No notifications found in your inbox.</p></div>');
+                            $('#profile-noti-badge').hide();
+                        }
+                    });
+                    if (typeof fetchNotifications === 'function') {
+                        fetchNotifications();
+                    }
+                }
+            });
+        };
+
+        $(document).on('click', '#btn-clear-all-noti', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $.ajax({
+                url: "{{ route('notifications.bell.clear') }}",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function() {
+                    fetchNotifications();
+                }
+            });
+        });
     });
 </script>

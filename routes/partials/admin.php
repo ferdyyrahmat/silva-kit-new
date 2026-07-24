@@ -37,6 +37,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'check_permission'])
       Route::delete('{id}/destroy', [App\Http\Controllers\System\Notification\NotificationController::class, 'destroy'])->name('destroy');
    });
 
+   Route::prefix('audit-logs')->name('audit-logs.')->group(function () {
+      Route::get('', [App\Http\Controllers\System\AuditLog\AuditLogController::class, 'index'])->name('index');
+   });
+
    Route::prefix('feedbacks')->name('feedbacks.')->group(function () {
       Route::get('', [App\Http\Controllers\System\Feedback\FeedbackController::class, 'index'])->name('index');
       Route::get('create', [App\Http\Controllers\System\Feedback\FeedbackController::class, 'create'])->name('create');

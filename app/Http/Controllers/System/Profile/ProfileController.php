@@ -21,7 +21,11 @@ class ProfileController extends Controller
 
         $groupedPermissions = $permissions->groupBy('group_name');
 
-        return view('admin.profile.index', compact('user', 'groupedPermissions'));
+        $notifications = \App\Models\SystemNotification::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.profile.index', compact('user', 'groupedPermissions', 'notifications'));
     }
 
     public function updateInfo(Request $request)
@@ -61,6 +65,8 @@ class ProfileController extends Controller
 
         $user->update($updateData);
 
+        audit_log('Updated personal profile details');
+
         return response()->json([
             'success' => true,
             'message' => 'Profile information updated successfully!',
@@ -69,7 +75,8 @@ class ProfileController extends Controller
                 'email' => $user->email,
                 'avatar_url' => $user->avatar_url,
                 'title' => $user->title ?? 'User',
-            ]
+            ],
+            'redirect' => route('v1.profile.index')
         ]);
     }
 
@@ -83,20 +90,28 @@ class ProfileController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (!Hash::check($request->current_password, $user->getRawOriginal('password'))) {
             return response()->json([
                 'success' => false,
                 'message' => 'Current password does not match our records.'
-            ], 422);
+            ]);
         }
 
         $user->update([
             'password' => Hash::make($request->password)
         ]);
 
+        audit_log('Changed account password');
+        send_notification(
+            'Password Changed',
+            'Your account password was updated successfully.',
+            route('v1.profile.index')
+        );
+
         return response()->json([
             'success' => true,
-            'message' => 'Password updated successfully!'
+            'message' => 'Password updated successfully!',
+            'redirect' => route('v1.profile.index')
         ]);
     }
 }

@@ -21,6 +21,12 @@ require __DIR__ . '/partials/user.php';
 Route::get('lang/{lang}', [App\Http\Controllers\System\Language\LanguageController::class, 'switchLang'])->name('lang.switch');
 Route::post('theme/toggle', [App\Http\Controllers\System\Language\LanguageController::class, 'toggleTheme'])->name('theme.toggle');
 Route::get('global-search', [App\Http\Controllers\System\Search\SearchController::class, 'search'])->middleware(['auth'])->name('global.search');
+Route::middleware(['auth'])->prefix('notifications-bell')->name('notifications.bell.')->group(function () {
+    Route::get('', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'getNotifications'])->name('index');
+    Route::post('{id}/read', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'markAsRead'])->name('read');
+    Route::delete('{id}', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'destroy'])->name('destroy');
+    Route::post('clear-all', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'clearAll'])->name('clear');
+});
 Route::get('maintenance', function() {
     return response()->view('error.maintenance');
 })->name('maintenance.page');
