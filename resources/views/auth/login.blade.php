@@ -72,9 +72,11 @@
                                             <label class="form-check-label" for="checkbox-signin">Remember me</label>
                                         </div>
                                     </div>
+                                    @if(!\App\Models\SystemSetting::getByKey('maintenance_mode', false))
                                     <div class="col-sm-6 text-end">
                                         <a class='text-muted fs-14' href='{{ route('password.request') }}'>Forgot password?</a>
                                     </div>
+                                    @endif
                                 </div>
 
                                 <div class="form-group mb-0 row">
@@ -86,9 +88,11 @@
                                 </div>
                             </form>
 
+                            @if(!\App\Models\SystemSetting::getByKey('maintenance_mode', false))
                             <div class="text-center text-muted mb-4">
                                 <p class="mb-0">Don't have an account ?<a class='text-primary ms-2 fw-medium' href='{{ route('register') }}'>Sign up</a></p>
                             </div>
+                            @endif
 
                         </div>
                     </div>

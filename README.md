@@ -143,8 +143,12 @@ php artisan serve
 ### 🔔 Notification Management (Admin)
 - CRUD notifications via admin panel
 
-### 🛠 Maintenance Management (Admin)
-- CRUD maintenance schedules via admin panel
+### 🛠 Maintenance Mode
+- ON/OFF toggle switch for maintenance mode in settings panel
+- Customizable maintenance title and message information
+- Exclude/bypass **Administrator** and **RCID** roles automatically
+- Non-authorized users will be presented with a beautiful, themed `pages-maintenance` view
+- Persisted dynamically in database utilizing `system_settings` table
 
 ### 💬 Feedback Management (Admin)
 - CRUD feedback entries via admin panel
@@ -171,9 +175,14 @@ silva-kit-new/
 │   │   │       └── User/
 │   │   └── Middleware/
 │   │       ├── CheckLockscreen.php
+│   │       ├── CheckMaintenanceMode.php
 │   │       ├── CheckPermission.php
 │   │       └── SetLocale.php
 │   └── Models/
+│       ├── Permission.php
+│       ├── Role.php
+│       ├── SystemSetting.php
+│       └── User.php
 ├── database/
 │   ├── migrations/
 │   └── seeders/
@@ -211,6 +220,7 @@ silva-kit-new/
 - ✅ **Avatar Upload** — Center-cropped circular avatar with `object-fit: cover`
 - ✅ **Lock Screen Avatar** — Dynamic avatar on lock screen page
 - ✅ **Profile Tabs** — Styled to match original Silva template tab design
+- ✅ **Maintenance Mode** — On/Off configuration settings panel with dynamic custom info (title & message) allowing bypass only for Administrator/RCID roles
 - ✅ **README Overhaul** — Complete documentation rewrite
 
 ---
