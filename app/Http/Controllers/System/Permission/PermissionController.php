@@ -15,5 +15,14 @@ class PermissionController extends Controller
     {
         return view('admin.permissions.index');
     }
-    
+
+    public function create()
+    {
+        return view('admin.permissions.create');
+    }
+
+    public function edit($id)
+    {
+        return view('admin.permissions.edit', compact('id'));
+    }
 }

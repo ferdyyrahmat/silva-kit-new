@@ -13,6 +13,9 @@ import 'datatables.net-bs5/js/dataTables.bootstrap5';
 import 'datatables.net-keytable/js/dataTables.keyTable';
 import 'datatables.net-keytable-bs5/js/keyTable.bootstrap5';
 
+import 'datatables.net-responsive/js/dataTables.responsive';
+import 'datatables.net-responsive-bs5/js/responsive.bootstrap5';
+
 import $ from 'jquery'
 window.jQuery = window.$ = $
 
