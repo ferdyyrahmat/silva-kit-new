@@ -22,6 +22,7 @@ File: Main Css File
 @import "custom/structure/topbar";
 @import "custom/structure/page-head";
 @import "custom/structure/footer";
+@import "custom/structure/dark";
 
 // Components
 @import "custom/components/accordions";
@@ -41,6 +42,7 @@ File: Main Css File
 @import "custom/components/reboot";
 @import "custom/components/tables";
 @import "custom/components/tabs";
+@import "custom/components/sweetalert";
 @import "custom/components/type";
 @import "custom/components/utilities";
 @import "custom/components/widgets";

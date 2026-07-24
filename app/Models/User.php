@@ -19,6 +19,10 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'avatar',
+        'phone',
+        'title',
+        'bio',
         'password',
     ];
 
@@ -43,5 +47,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar && file_exists(public_path($this->avatar))) {
+            return asset($this->avatar);
+        }
+        return asset('images/users/user-5.jpg');
+    }
+
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasPermission(string $routeName): bool
+    {
+        return $this->roles()->whereHas('permissions', function ($query) use ($routeName) {
+            $query->where('route_name', $routeName);
+        })->exists();
     }
 }

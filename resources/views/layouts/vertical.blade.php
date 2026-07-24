@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" data-bs-theme="{{ session('theme', 'light') }}">
 
 <head>
     @include('layouts.partials.title-meta', ['title' => $title])
@@ -7,7 +7,7 @@
     @include('layouts.partials.head-css')
 </head>
 
-<body data-menu-color="light" data-sidebar="default">
+<body data-menu-color="{{ session('theme') === 'dark' ? 'dark' : 'light' }}" data-sidebar="default">
 
     <div id="app-layout">
 

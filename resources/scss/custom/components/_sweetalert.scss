@@ -1,0 +1,165 @@
+// 
+// sweetalert.scss - Modern Custom Styling for SweetAlert2 matching Silva Theme
+//
+
+.swal2-popup {
+    font-family: 'Public Sans', system-ui, -apple-system, sans-serif !important;
+    border-radius: 1.25rem !important; // 20px modern rounded
+    padding: 2rem 1.75rem !important;
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15), 0 10px 15px -5px rgba(0, 0, 0, 0.08) !important;
+    background: #ffffff !important;
+
+    .swal2-title {
+        font-size: 1.35rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin-bottom: 0.5rem !important;
+        padding: 0 !important;
+    }
+
+    .swal2-html-container,
+    .swal2-content {
+        font-size: 0.95rem !important;
+        color: #64748b !important;
+        line-height: 1.6 !important;
+        margin: 0.75rem 0 0 0 !important;
+    }
+
+    .swal2-actions {
+        margin-top: 1.5rem !important;
+        gap: 0.75rem !important;
+    }
+
+    .swal2-styled {
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        padding: 0.65rem 1.5rem !important;
+        border-radius: 0.6rem !important; // 9px
+        transition: all 0.2s ease-in-out !important;
+        box-shadow: none !important;
+
+        &:focus {
+            box-shadow: none !important;
+        }
+
+        &.swal2-confirm {
+            background-color: #008080 !important; // Silva Teal
+            color: #ffffff !important;
+            border: none !important;
+
+            &:hover {
+                background-color: #006666 !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 12px rgba(0, 128, 128, 0.35) !important;
+            }
+        }
+
+        &.swal2-cancel {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 1px solid #e2e8f0 !important;
+
+            &:hover {
+                background-color: #e2e8f0 !important;
+                color: #1e293b !important;
+            }
+        }
+
+        &.swal2-deny {
+            background-color: #ef4444 !important;
+            color: #ffffff !important;
+
+            &:hover {
+                background-color: #dc2626 !important;
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35) !important;
+            }
+        }
+    }
+
+    // Modern icon adjustments
+    .swal2-icon {
+        border-width: 3px !important;
+        margin: 0.5rem auto 1.25rem !important;
+
+        &.swal2-success {
+            border-color: #10b981 !important;
+            color: #10b981 !important;
+
+            [class^='swal2-success-line'] {
+                background-color: #10b981 !important;
+            }
+
+            .swal2-success-ring {
+                border: 0.25em solid rgba(16, 185, 129, 0.25) !important;
+            }
+        }
+
+        &.swal2-error {
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+
+            [class^='swal2-x-mark-line'] {
+                background-color: #ef4444 !important;
+            }
+        }
+
+        &.swal2-warning {
+            border-color: #f59e0b !important;
+            color: #f59e0b !important;
+        }
+
+        &.swal2-info {
+            border-color: #0284c7 !important;
+            color: #0284c7 !important;
+        }
+    }
+
+    .swal2-timer-progress-bar {
+        background: #008080 !important;
+        height: 3px !important;
+        border-radius: 2px !important;
+    }
+}
+
+// Backdrop Blur & Overlay
+.swal2-container.swal2-backdrop-show,
+.swal2-container.swal2-nobackdrop {
+    background: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+// Dark Mode Support for SweetAlert2
+[data-bs-theme="dark"] {
+    .swal2-popup {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+
+        .swal2-title {
+            color: #f8fafc !important;
+        }
+
+        .swal2-html-container,
+        .swal2-content {
+            color: #94a3b8 !important;
+        }
+
+        .swal2-styled {
+            &.swal2-cancel {
+                background-color: #334155 !important;
+                color: #cbd5e1 !important;
+                border-color: #475569 !important;
+
+                &:hover {
+                    background-color: #475569 !important;
+                    color: #ffffff !important;
+                }
+            }
+        }
+    }
+
+    .swal2-container.swal2-backdrop-show,
+    .swal2-container.swal2-nobackdrop {
+        background: rgba(15, 23, 42, 0.75) !important;
+    }
+}

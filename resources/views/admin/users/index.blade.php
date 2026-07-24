@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Roles & Permissions'])
+@extends('layouts.vertical', ['title' => 'User Management'])
 
 @section('css')
     @vite([
@@ -11,13 +11,13 @@
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Roles & Permissions</h4>
+            <h4 class="fs-18 fw-semibold m-0">User Management</h4>
         </div>
 
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
                 <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Roles & Permissions</li>
+                <li class="breadcrumb-item active">User Management</li>
             </ol>
         </div>
     </div>
@@ -26,20 +26,19 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Roles List</h5>
-                    <a href="{{ route('admin.permissions.create') }}" class="btn btn-primary btn-sm"><i class="mdi mdi-plus me-1"></i>Add Role & Permissions</a>
+                    <h5 class="card-title mb-0">Users List</h5>
+                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm"><i class="mdi mdi-plus me-1"></i>Add New User</a>
                 </div><!-- end card header -->
 
                 <div class="card-body">
-                    <table id="roles-datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <table id="users-datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Role Name</th>
-                                <th>Description</th>
-                                <th>Assigned Permissions</th>
-                                <th>Assigned Users</th>
-                                <th>Created At</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Assigned Roles</th>
+                                <th>Registered At</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -60,38 +59,37 @@
     
     <script>
         $(document).ready(function() {
-            $('#roles-datatable').DataTable({
+            var table = $('#users-datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('admin.permissions.index') }}",
+                    url: "{{ route('admin.users.index') }}",
                     type: "GET"
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
-                    { data: 'description', name: 'description' },
-                    { data: 'permissions_count', name: 'permissions_count', orderable: false, searchable: false },
-                    { data: 'users_count', name: 'users_count', orderable: false, searchable: false },
+                    { data: 'email', name: 'email' },
+                    { data: 'roles', name: 'roles', orderable: false, searchable: false },
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
                 drawCallback: function() {
-                    $("#roles-datatable_length select").addClass('form-select form-select-sm');
+                    $("#users-datatable_length select").addClass('form-select form-select-sm');
                     $(".dataTables_length label").addClass('form-label');
                 }
             });
         });
 
-        function deleteRole(id, url) {
+        function deleteUser(id, url) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be able to revert this role!",
+                text: "You won't be able to revert this user account!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, delete user!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -104,7 +102,7 @@
                                     response.message,
                                     'success'
                                 );
-                                $('#roles-datatable').DataTable().ajax.reload();
+                                $('#users-datatable').DataTable().ajax.reload();
                             } else {
                                 Swal.fire(
                                     'Failed!',

@@ -61,6 +61,18 @@ Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
 Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
     ->middleware('auth');
 
+Route::get('/lockscreen', [\App\Http\Controllers\Auth\LockscreenController::class, 'show'])
+    ->middleware('auth')
+    ->name('lockscreen');
+
+Route::post('/lockscreen/lock', [\App\Http\Controllers\Auth\LockscreenController::class, 'lock'])
+    ->middleware('auth')
+    ->name('lockscreen.lock');
+
+Route::post('/lockscreen/unlock', [\App\Http\Controllers\Auth\LockscreenController::class, 'unlock'])
+    ->middleware('auth')
+    ->name('lockscreen.unlock');
+
 Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');

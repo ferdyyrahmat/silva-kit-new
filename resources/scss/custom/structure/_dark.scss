@@ -1,0 +1,237 @@
+// 
+// dark.scss - Modern & Crisp Dark Mode Styles for Silva Theme
+//
+
+[data-bs-theme="dark"] {
+    // Global Body & Content Page Background
+    body,
+    .content-page,
+    .content {
+        background-color: #0f172a !important;
+        color: #e2e8f0 !important;
+    }
+
+    // Topbar Styling in Dark Mode
+    .topbar-custom {
+        background-color: #1e293b !important;
+        border-bottom: 1px solid #334155 !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3) !important;
+
+        .topnav-menu {
+            .nav-link {
+                color: #94a3b8 !important;
+
+                &:hover,
+                &:focus {
+                    color: #f8fafc !important;
+                }
+            }
+        }
+
+        .topbar-search {
+            .form-control {
+                background-color: #0f172a !important;
+                border-color: #334155 !important;
+                color: #f8fafc !important;
+
+                &::placeholder {
+                    color: #64748b !important;
+                }
+            }
+
+            .mdi-magnify {
+                color: #64748b !important;
+            }
+        }
+
+        h5, .pro-user-name {
+            color: #f1f5f9 !important;
+        }
+    }
+
+    // Sidebar Menu in Dark Mode
+    .app-sidebar-menu {
+        background-color: #0f172a !important;
+        border-right: 1px solid #1e293b !important;
+    }
+
+    // Cards in Dark Mode
+    .card {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2) !important;
+        color: #e2e8f0 !important;
+
+        .card-header,
+        .card-footer {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+        }
+
+        .card-title,
+        h1, h2, h3, h4, h5, h6 {
+            color: #f8fafc !important;
+        }
+    }
+
+    // Text & Color Overrides in Dark Mode
+    .text-dark {
+        color: #f8fafc !important;
+    }
+
+    .text-muted {
+        color: #94a3b8 !important;
+    }
+
+    .bg-light,
+    .bg-light-subtle {
+        background-color: #0f172a !important;
+        color: #cbd5e1 !important;
+    }
+
+    .border,
+    .border-bottom,
+    .border-top,
+    .border-start,
+    .border-end {
+        border-color: #334155 !important;
+    }
+
+    // Dropdown Menus in Dark Mode
+    .dropdown-menu {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+
+        .dropdown-item {
+            color: #cbd5e1 !important;
+
+            &:hover,
+            &:focus,
+            &.active {
+                background-color: #334155 !important;
+                color: #ffffff !important;
+            }
+        }
+
+        .dropdown-header {
+            color: #94a3b8 !important;
+        }
+
+        .dropdown-divider {
+            border-color: #334155 !important;
+        }
+    }
+
+    // DataTables & Tables in Dark Mode
+    .table {
+        color: #e2e8f0 !important;
+        border-color: #334155 !important;
+
+        th, td {
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+
+        thead th {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+        }
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) > * {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+        color: #e2e8f0 !important;
+    }
+
+    .table-hover > tbody > tr:hover > * {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    .dataTables_wrapper {
+        .dataTables_length,
+        .dataTables_filter,
+        .dataTables_info,
+        .dataTables_processing,
+        .dataTables_paginate {
+            color: #94a3b8 !important;
+        }
+
+        .dataTables_filter input,
+        .dataTables_length select {
+            background-color: #0f172a !important;
+            border-color: #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        .paginate_button {
+            color: #cbd5e1 !important;
+
+            &.current,
+            &:hover {
+                background: #334155 !important;
+                border-color: #475569 !important;
+                color: #ffffff !important;
+            }
+        }
+    }
+
+    // Form Inputs & Selects in Dark Mode
+    .form-control,
+    .form-select {
+        background-color: #0f172a !important;
+        border-color: #334155 !important;
+        color: #f8fafc !important;
+
+        &:focus {
+            background-color: #0f172a !important;
+            border-color: #008080 !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 128, 128, 0.25) !important;
+            color: #f8fafc !important;
+        }
+
+        &::placeholder {
+            color: #64748b !important;
+        }
+    }
+
+    .form-check-input {
+        background-color: #0f172a !important;
+        border-color: #475569 !important;
+
+        &:checked {
+            background-color: #008080 !important;
+            border-color: #008080 !important;
+        }
+    }
+
+    // Modal in Dark Mode
+    .modal-content {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+        color: #e2e8f0 !important;
+
+        .modal-header,
+        .modal-footer {
+            border-color: #334155 !important;
+        }
+    }
+
+    // Nav Tabs & Pills in Dark Mode
+    .nav-underline {
+        border-bottom-color: #334155 !important;
+
+        .nav-link {
+            color: #94a3b8 !important;
+
+            &:hover {
+                color: #008080 !important;
+            }
+
+            &.active {
+                color: #008080 !important;
+                border-bottom-color: #008080 !important;
+            }
+        }
+    }
+}

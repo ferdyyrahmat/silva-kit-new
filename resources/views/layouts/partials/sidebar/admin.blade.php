@@ -1,9 +1,15 @@
-<li class="menu-title">Admin Tools</li>
+<li class="menu-title">{{ __('messages.system_management') }}</li>
 
 <li>
     <a href="{{ route('admin.permissions.index') }}" class="tp-link">
         <i data-feather="key"></i>
-        <span> Permissions </span>
+        <span> {{ __('messages.roles_permissions') }} </span>
+    </a>
+</li>
+<li>
+    <a href="{{ route('admin.users.index') }}" class="tp-link">
+        <i data-feather="users"></i>
+        <span> {{ __('messages.user_management') }} </span>
     </a>
 </li>
 <li>
