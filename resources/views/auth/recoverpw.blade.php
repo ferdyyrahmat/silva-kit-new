@@ -10,7 +10,7 @@
 
                     <div class="mb-0 border-0 p-md-5 p-lg-0 p-4">
                         <div class="mb-4 p-0 text-center">
-                            <a href="{{ route('second', [ 'dashboard' , 'index']) }}" class="auth-logo">
+                            <a href="#" class="auth-logo">
                                 <img src="/images/logo-dark.png" alt="logo-dark" class="mx-auto" height="28" />
                             </a>
                         </div>
@@ -36,7 +36,7 @@
                                 </div>
                             </form>
                             <div class="text-center text-muted">
-                                <p class="mb-0">Change the mind  ?<a class='text-primary ms-2 fw-medium' href='auth-login.html'>Back to Login</a></p>
+                                <p class="mb-0">Change the mind  ?<a class='text-primary ms-2 fw-medium' href='{{ route('root') }}'>Back to Login</a></p>
                             </div>
                         </div>
                     </div>

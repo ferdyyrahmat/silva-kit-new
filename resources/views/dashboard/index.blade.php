@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'CRM'])
+@extends('layouts.vertical', ['title' => 'Dashboard'])
 
 @section('content')
 

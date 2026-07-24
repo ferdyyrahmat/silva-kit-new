@@ -9,7 +9,7 @@
                     </button>
                 </li>
                 <li class="d-none d-lg-block">
-                    <h5 class="mb-0">Good Morning, John Smith</h5>
+                    <h5 class="mb-0">Good Morning, {{ auth()->user()->name }}</h5>
                 </li>
             </ul>
 
@@ -157,7 +157,7 @@
                     <a class="nav-link dropdown-toggle nav-user me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                         <img src="/images/users/user-5.jpg" alt="user-image" class="rounded-circle">
                         <span class="pro-user-name ms-1">
-                            John Smith <i class="mdi mdi-chevron-down"></i>
+                            {{ auth()->user()->name }} <i class="mdi mdi-chevron-down"></i>
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
@@ -181,7 +181,7 @@
                         <div class="dropdown-divider"></div>
 
                         <!-- item-->
-                        <a href="auth-logout.html" class="dropdown-item notify-item">
+                        <a href="{{ url('/logout') }}" class="dropdown-item notify-item">
                             <i class="mdi mdi-location-exit fs-16 align-middle"></i>
                             <span>Logout</span>
                         </a>

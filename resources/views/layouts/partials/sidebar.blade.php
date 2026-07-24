@@ -6,7 +6,7 @@
         <div id="sidebar-menu">
 
             <div class="logo-box">
-                <a href="{{ route('second', ['dashboard', 'index'])}}" class="logo logo-light">
+                <a href="{{ route('root')}}" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="/images/logo-sm.png" alt="" height="22">
                     </span>
@@ -14,7 +14,7 @@
                         <img src="/images/logo-light.png" alt="" height="24">
                     </span>
                 </a>
-                <a href="{{ route('second', ['dashboard', 'index'])}}" class="logo logo-dark">
+                <a href="{{ route('root')}}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="/images/logo-sm.png" alt="" height="22">
                     </span>
@@ -25,9 +25,6 @@
             </div>
 
             <ul id="side-menu">
-
-                <li class="menu-title">Menu</li>
-
                 <li>
                     <a href="{{ route('root')}}" class="tp-link">
                         <i data-feather="home"></i>
@@ -35,26 +32,7 @@
                     </a>
                 </li>
 
-                {{-- <li>
-                    <a href="#sidebarDashboards" data-bs-toggle="collapse">
-                        <i data-feather="home"></i>
-                        <span> Dashboard </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarDashboards">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{ route('second', ['dashboard', 'index'])}}" class="tp-link">CRM</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('second', ['dashboard', 'analytics'])}}" class="tp-link">Analytics</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('second', ['dashboard', 'ecommerce'])}}" class="tp-link">eCommerce</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
+                @include('layouts.partials.sidebar.admin')
 
                 <li class="menu-title">Pages</li>
 
@@ -67,19 +45,7 @@
                     <div class="collapse" id="sidebarError">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{ route('second', ['error', 'error-404'])}}" class="tp-link">Error 404</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('second', ['error', 'error-500'])}}" class="tp-link">Error 500</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('second', ['error', 'error-503'])}}" class="tp-link">Error 503</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('second', ['error', 'error-429'])}}" class="tp-link">Error 429</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('second', ['error', 'offline-page'])}}" class="tp-link">Offline Page</a>
+                                <a href="#" class="tp-link">Error 404</a>
                             </li>
                         </ul>
                     </div>

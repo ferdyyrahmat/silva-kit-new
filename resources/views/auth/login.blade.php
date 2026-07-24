@@ -10,7 +10,7 @@
 
                     <div class="mb-0 border-0 p-md-5 p-lg-0 p-4">
                         <div class="mb-4 p-0 text-center">
-                            <a href="{{ route('second', [ 'dashboard' , 'index']) }}" class="auth-logo">
+                            <a href="{{ route('root') }}" class="auth-logo">
                                 <img src="/images/logo-dark.png" alt="logo-dark" class="mx-auto" height="28" />
                             </a>
                         </div>
@@ -47,7 +47,7 @@
                         <div class="saprator my-4"><span>or continue with email</span></div>
 
                         <div class="pt-0">
-                            <form method="POST" action="{{ route('login')}}" class="my-4">
+                            <form method="POST" action="{{ route('login.authenticate') }}" class="my-4">
                                 
                                 @csrf
                                 @if (sizeof($errors) > 0)
@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6 text-end">
-                                        <a class='text-muted fs-14' href='{{ route('second', [ 'auth' , 'recoverpw']) }}'>Forgot password?</a>
+                                        <a class='text-muted fs-14' href='{{ route('password.request') }}'>Forgot password?</a>
                                     </div>
                                 </div>
 
@@ -87,7 +87,7 @@
                             </form>
 
                             <div class="text-center text-muted mb-4">
-                                <p class="mb-0">Don't have an account ?<a class='text-primary ms-2 fw-medium' href='{{ route('second', [ 'auth' , 'register']) }}'>Sing up</a></p>
+                                <p class="mb-0">Don't have an account ?<a class='text-primary ms-2 fw-medium' href='{{ route('register') }}'>Sign up</a></p>
                             </div>
 
                         </div>

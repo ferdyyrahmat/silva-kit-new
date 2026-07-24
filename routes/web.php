@@ -15,11 +15,9 @@ use App\Http\Controllers\RoutingController;
 */
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/partials/admin.php';
 
-Route::group(['prefix' => '/', 'middleware' => 'auth'], function () {
-    Route::get('', [RoutingController::class, 'index'])->name('root');
-    Route::get('{first}/{second}/{third}', [RoutingController::class, 'thirdLevel'])->name('third');
-    Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
-    Route::get('{any}', [RoutingController::class, 'root'])->name('any');
+Route::get('', [RoutingController::class, 'index'])->middleware(['auth'])->name('root');
+Route::prefix('v1')->name('v1.')->middleware(['auth'])->group(function () {
+    Route::get('dashboard', [App\Http\Controllers\Dashboard\DashboardController::class,'index'])->name('dashboard');
 });
-

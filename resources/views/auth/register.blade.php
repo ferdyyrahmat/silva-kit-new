@@ -10,7 +10,7 @@
 
                     <div class="mb-0 border-0 p-md-5 p-lg-0 p-4">
                         <div class="mb-4 p-0 text-center">
-                            <a href="{{ route('second', [ 'dashboard' , 'index']) }}" class="auth-logo">
+                            <a href="{{ route('root') }}" class="auth-logo">
                                 <img src="/images/logo-dark.png" alt="logo-dark" class="mx-auto" height="28"/>
                             </a>
                         </div>
@@ -44,20 +44,21 @@
                         <div class="saprator my-4"><span>or continue with email</span></div>
 
                         <div class="pt-0">
-                            <form method="POST" action="{{ route('register') }}" class="my-4">
+                            <form method="POST" action="{{ route('register.store') }}" class="my-4">
+                                @csrf
                                 <div class="form-group mb-3">
-                                    <label for="username" class="form-label">Username</label>
-                                    <input class="form-control" name="username" type="text" id="username" required="" placeholder="Enter your Username">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input class="form-control" name="name" type="text" id="name" required="" placeholder="Enter your Name">
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="emailaddress" class="form-label">Email address</label>
-                                    <input class="form-control" type="email" id="emailaddress" required="" placeholder="Enter your email">
+                                    <input class="form-control" name="email" type="email" id="emailaddress" required="" placeholder="Enter your email">
                                 </div>
     
                                 <div class="form-group mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input class="form-control" type="password" required="" id="password" placeholder="Enter your password">
+                                    <input class="form-control" name="password" type="password" required="" id="password" placeholder="Enter your password">
                                 </div>
     
                                 <div class="form-group d-flex mb-3">
@@ -79,7 +80,7 @@
                             </form>
 
                             <div class="text-center text-muted mb-4">
-                                <p class="mb-0">Already have an account ?<a class='text-primary ms-2 fw-medium' href='{{ route('second', [ 'auth' , 'login']) }}'>Login here</a></p>
+                                <p class="mb-0">Already have an account ?<a class='text-primary ms-2 fw-medium' href='{{ route('root') }}'>Login here</a></p>
                             </div>
 
                         </div>
