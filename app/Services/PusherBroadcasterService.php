@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Jobs\BroadcastPusherEventJob;
 use App\Models\SystemSetting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -44,42 +43,9 @@ class PusherBroadcasterService
     }
 
     /**
-     * Queue a Pusher broadcast so it doesn't block the current request.
+     * Broadcast an event to Pusher WebSocket channel.
      */
     public function broadcast(string $channel, string $event, array $data): array
-    {
-        $settings = $this->getPusherSettings();
-
-        if (!$settings['enabled']) {
-            return ['success' => false, 'message' => 'WebSocket is currently disabled.'];
-        }
-
-        $appId     = trim($settings['app_id']);
-        $appKey    = trim($settings['app_key']);
-        $appSecret = trim($settings['app_secret']);
-
-        if (empty($appId) || empty($appKey) || empty($appSecret)) {
-            return ['success' => false, 'message' => 'Pusher App ID, Key, and Secret must be configured.'];
-        }
-
-        try {
-            if (config('queue.default') === 'sync') {
-                return $this->broadcastNow($channel, $event, $data);
-            }
-
-            BroadcastPusherEventJob::dispatch($channel, $event, $data);
-
-            return ['success' => true, 'message' => "Event {$event} queued for broadcast to channel {$channel}!"];
-        } catch (\Throwable $e) {
-            Log::error("Pusher Broadcast Queue Failed: " . $e->getMessage());
-            return ['success' => false, 'message' => "Pusher Queue Exception: " . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Send the broadcast immediately (used by queued job).
-     */
-    public function broadcastNow(string $channel, string $event, array $data): array
     {
         $settings = $this->getPusherSettings();
 
@@ -120,7 +86,7 @@ class PusherBroadcasterService
             $stringToSign = "POST\n/apps/{$appId}/events\n{$queryString}";
             $signature    = hash_hmac('sha256', $stringToSign, $appSecret);
 
-            $baseUrl = !empty($host)
+            $baseUrl = !empty($host) 
                 ? ($settings['use_tls'] ? 'https://' : 'http://') . $host . ':' . $settings['port']
                 : "https://api-{$cluster}.pusher.com";
 
@@ -132,10 +98,10 @@ class PusherBroadcasterService
 
             if ($response->successful()) {
                 return ['success' => true, 'message' => "Event {$event} broadcasted to channel {$channel}!"];
+            } else {
+                Log::error("Pusher Broadcast API Error [{$response->status()}]: " . $response->body());
+                return ['success' => false, 'message' => "Pusher API Error {$response->status()}: " . $response->body()];
             }
-
-            Log::error("Pusher Broadcast API Error [{$response->status()}]: " . $response->body());
-            return ['success' => false, 'message' => "Pusher API Error {$response->status()}: " . $response->body()];
         } catch (\Throwable $e) {
             Log::error("Pusher Broadcast Failed: " . $e->getMessage());
             return ['success' => false, 'message' => "Pusher Exception: " . $e->getMessage()];

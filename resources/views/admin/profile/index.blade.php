@@ -500,8 +500,8 @@
                 success: function() {
                     $('#profile-noti-container').html('<div class="text-center py-5"><i class="mdi mdi-bell-off-outline text-muted fs-36"></i><p class="text-muted fs-14 mt-2 mb-0">No notifications found in your inbox.</p></div>');
                     $('#profile-noti-badge').hide();
-                    if (typeof window.fetchNotifications === 'function') {
-                        window.fetchNotifications();
+                    if (typeof fetchNotifications === 'function') {
+                        fetchNotifications();
                     }
                 }
             });

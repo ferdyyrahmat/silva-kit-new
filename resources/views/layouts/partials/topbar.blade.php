@@ -310,7 +310,7 @@
             });
         }
             // Live Notifications Bell AJAX Polling & Actions
-        window.fetchNotifications = function() {
+        function fetchNotifications() {
             $.ajax({
                 url: "{{ route('notifications.bell.index') }}",
                 type: "GET",
@@ -355,15 +355,10 @@
                     listContainer.html(html);
                 }
             });
-        };
-
-        window.fetchNotifications();
-
-        if (window.PUSHER_NOTIFICATION_ENABLED) {
-            console.info('Using Pusher for real-time notifications; polling disabled.');
-        } else {
-            setInterval(window.fetchNotifications, 15000); // Poll every 15 seconds when Pusher is unavailable
         }
+
+        fetchNotifications();
+        setInterval(fetchNotifications, 15000); // Poll every 15 seconds
 
         window.markNotificationRead = function(id, targetUrl) {
             $.ajax({
@@ -374,7 +369,7 @@
                     if (targetUrl && targetUrl !== 'javascript:void(0);') {
                         window.location.href = targetUrl;
                     } else {
-                        window.fetchNotifications();
+                        fetchNotifications();
                     }
                 }
             });
@@ -395,8 +390,8 @@
                             $('#profile-noti-badge').hide();
                         }
                     });
-                    if (typeof window.fetchNotifications === 'function') {
-                        window.fetchNotifications();
+                    if (typeof fetchNotifications === 'function') {
+                        fetchNotifications();
                     }
                 }
             });
@@ -410,7 +405,7 @@
                 type: "POST",
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 success: function() {
-                    window.fetchNotifications();
+                    fetchNotifications();
                 }
             });
         });

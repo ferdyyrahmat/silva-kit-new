@@ -213,16 +213,6 @@
                 var ticketChannel = pusher.subscribe('ticket-' + ticketCode);
                 ticketChannel.bind('reply-created', function(data) {
                     appendReplyBubble(data);
-
-                    if (typeof window.showRealtimeToast === 'function') {
-                        const preview = (data.message || '').toString().trim();
-                        const text = preview.length > 120 ? preview.slice(0, 117) + '…' : preview;
-                        window.showRealtimeToast({
-                            icon: 'info',
-                            title: data.sender_name ? 'New reply from ' + data.sender_name : 'New ticket reply',
-                            text: text || 'You received a new message.'
-                        });
-                    }
                 });
             } catch (e) {
                 console.error("Pusher Ticket Channel Error:", e);

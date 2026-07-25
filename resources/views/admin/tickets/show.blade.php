@@ -200,12 +200,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ticketCode = "{{ $ticket->ticket_code }}";
 
-        const pendingReplyIds = new Set();
-
         function appendReplyBubble(data) {
-            if (!data || !data.id) return;
             if ($(`.reply-bubble[data-reply-id="${data.id}"]`).length) return;
-            if (pendingReplyIds.has(data.id)) return;
 
             $('#no-replies-placeholder').remove();
 
@@ -267,16 +263,6 @@
                 var ticketChannel = pusher.subscribe('ticket-' + ticketCode);
                 ticketChannel.bind('reply-created', function(data) {
                     appendReplyBubble(data);
-
-                    if (typeof window.showRealtimeToast === 'function') {
-                        const preview = (data.message || '').toString().trim();
-                        const text = preview.length > 120 ? preview.slice(0, 117) + '…' : preview;
-                        window.showRealtimeToast({
-                            icon: 'info',
-                            title: data.sender_name ? 'New reply from ' + data.sender_name : 'New ticket reply',
-                            text: text || 'You received a new message.'
-                        });
-                    }
                 });
             } catch (e) {
                 console.error("Pusher Ticket Channel Error:", e);
@@ -308,7 +294,6 @@
                         messageInput.value = '';
 
                         if (resp.success && resp.reply) {
-                            pendingReplyIds.add(resp.reply.id);
                             appendReplyBubble({
                                 id: resp.reply.id,
                                 sender_type: resp.reply.sender_type,
