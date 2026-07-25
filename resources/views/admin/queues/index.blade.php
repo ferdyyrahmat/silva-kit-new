@@ -1,15 +1,15 @@
-@extends('layouts.vertical', ['title' => 'Queue & Redis Manager'])
+@extends('layouts.vertical', ['title' => __('messages.queues_redis')])
 
 @section('content')
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Asynchronous Task Queue & Redis Manager</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.queues_redis') }}</h4>
         </div>
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Task Queues</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.queues_redis') }}</li>
             </ol>
         </div>
     </div>
@@ -21,7 +21,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">Queue Driver</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.queue_worker_status') }}</span>
                             <h4 class="fw-bold mb-0 text-primary mt-1 font-monospace">{{ strtoupper($queueConnection) }}</h4>
                         </div>
                         <div class="avatar-sm">
@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">Redis Engine Status</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.redis_status') }}</span>
                             <h4 class="fw-bold mb-0 mt-1 {{ $redisStatus == 'Connected' ? 'text-success' : 'text-warning' }}">
                                 <i class="mdi {{ $redisStatus == 'Connected' ? 'mdi-check-circle' : 'mdi-alert-circle' }} me-1"></i>{{ $redisStatus }}
                             </h4>
@@ -59,7 +59,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">Failed Jobs Count</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.total_failed_jobs') }}</span>
                             <h4 class="fw-bold mb-0 {{ count($failedJobs) > 0 ? 'text-danger' : 'text-muted' }} mt-1">{{ count($failedJobs) }}</h4>
                         </div>
                         <div class="avatar-sm">
@@ -78,10 +78,10 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-3">
-                    <h5 class="card-title mb-0 fs-15 fw-bold text-body"><i class="mdi mdi-history text-danger me-1"></i>Failed Queue Jobs</h5>
+                    <h5 class="card-title mb-0 fs-15 fw-bold text-body"><i class="mdi mdi-history text-danger me-1"></i>{{ __('messages.failed_jobs') }}</h5>
                     @if(count($failedJobs) > 0)
                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="purgeAllFailedJobs()">
-                            <i class="mdi mdi-delete-sweep-outline me-1"></i>Flush All Failed Jobs
+                            <i class="mdi mdi-delete-sweep-outline me-1"></i>{{ __('messages.flush_failed') }}
                         </button>
                     @endif
                 </div>
@@ -93,8 +93,8 @@
                                     <th class="ps-3">ID</th>
                                     <th>Connection / Queue</th>
                                     <th>Payload / Job Class</th>
-                                    <th>Failed At</th>
-                                    <th class="text-end pe-3">Action</th>
+                                    <th>{{ __('messages.timestamp') }}</th>
+                                    <th class="text-end pe-3">{{ __('messages.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -116,7 +116,7 @@
                                         <td class="text-muted">{{ $job->failed_at }}</td>
                                         <td class="text-end pe-3">
                                             <button type="button" class="btn btn-outline-primary btn-xs me-1" onclick="retryJob('{{ $job->id }}')">
-                                                <i class="mdi mdi-refresh me-1"></i>Retry
+                                                <i class="mdi mdi-refresh me-1"></i>{{ __('messages.retry_job') }}
                                             </button>
                                             <button type="button" class="btn btn-outline-danger btn-xs" onclick="deleteJob('{{ $job->id }}')">
                                                 <i class="mdi mdi-trash-can-outline"></i>
@@ -127,8 +127,7 @@
                                     <tr>
                                         <td colspan="5" class="text-center py-5 text-muted">
                                             <i class="mdi mdi-check-circle-outline fs-36 text-success d-block mb-2"></i>
-                                            <p class="mb-0 fs-14 fw-semibold text-dark">No failed queue jobs found!</p>
-                                            <small>Asynchronous task engine is running clean with zero errors.</small>
+                                            <p class="mb-0 fs-14 fw-semibold text-dark">{{ __('messages.no_data') }}</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -146,11 +145,11 @@
 <script>
     function retryJob(id) {
         Swal.fire({
-            title: 'Retry Job #' + id + '?',
-            text: 'This job will be re-queued for execution.',
+            title: '{{ __("messages.retry_job") }} #' + id + '?',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Yes, Retry'
+            confirmButtonText: '{{ __("messages.retry_job") }}',
+            cancelButtonText: '{{ __("messages.cancel") }}'
         }).then((res) => {
             if (res.isConfirmed) {
                 $.ajax({
@@ -168,12 +167,13 @@
 
     function deleteJob(id) {
         Swal.fire({
-            title: 'Delete Failed Job #' + id + '?',
-            text: 'This job record will be permanently removed.',
+            title: '{{ __("messages.confirm_delete") }}',
+            text: 'Job #' + id,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            confirmButtonText: 'Delete'
+            confirmButtonText: '{{ __("messages.yes_delete") }}',
+            cancelButtonText: '{{ __("messages.cancel") }}'
         }).then((res) => {
             if (res.isConfirmed) {
                 $.ajax({
@@ -191,12 +191,12 @@
 
     function purgeAllFailedJobs() {
         Swal.fire({
-            title: 'Flush All Failed Jobs?',
-            text: 'Are you sure you want to purge all failed queue job records?',
+            title: '{{ __("messages.flush_failed") }}?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            confirmButtonText: 'Flush All'
+            confirmButtonText: '{{ __("messages.yes_delete") }}',
+            cancelButtonText: '{{ __("messages.cancel") }}'
         }).then((res) => {
             if (res.isConfirmed) {
                 $.ajax({

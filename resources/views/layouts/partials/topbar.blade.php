@@ -8,8 +8,20 @@
                         <i data-feather="menu" class="noti-icon"></i>
                     </button>
                 </li>
+                @php
+                    $hour = (int) date('H');
+                    if ($hour >= 5 && $hour < 12) {
+                        $greeting = app()->getLocale() === 'id' ? 'Selamat Pagi' : 'Good Morning';
+                    } elseif ($hour >= 12 && $hour < 17) {
+                        $greeting = app()->getLocale() === 'id' ? 'Selamat Siang' : 'Good Afternoon';
+                    } elseif ($hour >= 17 && $hour < 19) {
+                        $greeting = app()->getLocale() === 'id' ? 'Selamat Sore' : 'Good Evening';
+                    } else {
+                        $greeting = app()->getLocale() === 'id' ? 'Selamat Malam' : 'Good Night';
+                    }
+                @endphp
                 <li class="d-none d-lg-block">
-                    <h5 class="mb-0">{{ __('messages.good_morning') }}, {{ auth()->user()->name }}</h5>
+                    <h5 class="mb-0" id="topbar-greeting-text">{{ $greeting }}, {{ auth()->user()->name }}</h5>
                 </li>
                 @if(\App\Models\SystemSetting::getByKey('maintenance_mode', false))
                 <li class="ms-lg-3 topbar-maintenance-item">
@@ -182,6 +194,27 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Dynamic Time-of-Day Greeting (Morning / Afternoon / Evening / Night)
+        const greetingEl = document.getElementById('topbar-greeting-text');
+        if (greetingEl) {
+            const hour = new Date().getHours();
+            const userName = "{{ auth()->user()->name }}";
+            const isIndo = "{{ app()->getLocale() }}" === 'id';
+            let greeting = 'Good Morning';
+
+            if (hour >= 5 && hour < 12) {
+                greeting = isIndo ? 'Selamat Pagi' : 'Good Morning';
+            } else if (hour >= 12 && hour < 17) {
+                greeting = isIndo ? 'Selamat Siang' : 'Good Afternoon';
+            } else if (hour >= 17 && hour < 19) {
+                greeting = isIndo ? 'Selamat Sore' : 'Good Evening';
+            } else {
+                greeting = isIndo ? 'Selamat Malam' : 'Good Night';
+            }
+
+            greetingEl.textContent = `${greeting}, ${userName}`;
+        }
+
         // Dark Mode Toggle
         var btnToggle = document.getElementById('btn-theme-toggle');
         if (btnToggle) {

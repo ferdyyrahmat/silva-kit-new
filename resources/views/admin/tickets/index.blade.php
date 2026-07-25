@@ -1,18 +1,18 @@
-@extends('layouts.vertical', ['title' => 'Support Ticket Center'])
+@extends('layouts.vertical', ['title' => __('messages.manage_support_tickets')])
 
 @section('content')
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Support Ticket Center</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.manage_support_tickets') }}</h4>
         </div>
         <div class="text-end">
             <a href="{{ route('admin.tickets.developers.index') }}" class="btn btn-outline-primary btn-sm me-2 fw-bold">
-                <i class="mdi mdi-account-code-outline me-1"></i>Developer Team Settings
+                <i class="mdi mdi-account-code-outline me-1"></i>{{ __('messages.manage_developers') }}
             </a>
             <ol class="breadcrumb m-0 py-0 d-inline-flex align-items-center">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Tickets</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.support_tickets') }}</li>
             </ol>
         </div>
     </div>
@@ -32,7 +32,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">Total Tickets</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.support_tickets') }}</span>
                             <h4 class="fw-bold mb-0 text-primary mt-1">{{ $stats['total'] }}</h4>
                         </div>
                         <div class="avatar-sm">
@@ -50,7 +50,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">Open Tickets</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.open') }}</span>
                             <h4 class="fw-bold mb-0 text-danger mt-1">{{ $stats['open'] }}</h4>
                         </div>
                         <div class="avatar-sm">
@@ -68,7 +68,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">In Progress</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.in_progress') }}</span>
                             <h4 class="fw-bold mb-0 text-warning mt-1">{{ $stats['in_progress'] }}</h4>
                         </div>
                         <div class="avatar-sm">
@@ -86,7 +86,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted fs-12 text-uppercase fw-bold">Resolved</span>
+                            <span class="text-muted fs-12 text-uppercase fw-bold">{{ __('messages.resolved') }}</span>
                             <h4 class="fw-bold mb-0 text-success mt-1">{{ $stats['resolved'] }}</h4>
                         </div>
                         <div class="avatar-sm">
@@ -105,16 +105,15 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-3">
-                    <h5 class="card-title mb-0 fw-bold text-body"><i class="mdi mdi-ticket-confirmation-outline text-primary me-1"></i>Support Ticket Queue</h5>
+                    <h5 class="card-title mb-0 fw-bold text-body"><i class="mdi mdi-ticket-confirmation-outline text-primary me-1"></i>{{ __('messages.manage_support_tickets') }}</h5>
                     <div class="d-flex gap-2">
                         <form method="GET" action="{{ route('admin.tickets.index') }}" class="d-flex gap-2">
                             <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="">-- All Status --</option>
-                                <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>🟢 Open</option>
-                                <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>🟡 In Progress</option>
-                                <option value="waiting_user" {{ request('status') === 'waiting_user' ? 'selected' : '' }}>⏳ Waiting User</option>
-                                <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>🔵 Resolved</option>
-                                <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>⚫ Closed</option>
+                                <option value="">-- {{ __('messages.all_statuses') }} --</option>
+                                <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>🟢 {{ __('messages.open') }}</option>
+                                <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>🟡 {{ __('messages.in_progress') }}</option>
+                                <option value="waiting_user" {{ request('status') === 'waiting_user' ? 'selected' : '' }}>⏳ {{ __('messages.waiting_user') }}</option>
+                                <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>🔵 {{ __('messages.resolved') }}</option>
                             </select>
                         </form>
                     </div>
@@ -125,14 +124,14 @@
                         <table class="table table-hover align-middle mb-0 fs-13">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-3">Ticket Code</th>
-                                    <th>Submitter</th>
-                                    <th>Subject / Category</th>
-                                    <th>Priority</th>
-                                    <th>Assigned Dev</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th class="text-end pe-3">Action</th>
+                                    <th class="ps-3">{{ __('messages.ticket_code') }}</th>
+                                    <th>{{ __('messages.ticket_user') }}</th>
+                                    <th>{{ __('messages.subject') }} / {{ __('messages.category') }}</th>
+                                    <th>{{ __('messages.priority') }}</th>
+                                    <th>{{ __('messages.assigned_dev') }}</th>
+                                    <th>{{ __('messages.status') }}</th>
+                                    <th>{{ __('messages.created_at') }}</th>
+                                    <th class="text-end pe-3">{{ __('messages.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -180,7 +179,7 @@
                                                     <i class="mdi mdi-account-code me-1"></i>{{ $t->assignedDeveloper->name }}
                                                 </span>
                                             @else
-                                                <span class="badge bg-secondary-subtle text-muted fs-11">Unassigned</span>
+                                                <span class="badge bg-secondary-subtle text-muted fs-11">{{ __('messages.unassigned') }}</span>
                                             @endif
                                         </td>
                                         <td>
@@ -200,7 +199,7 @@
                                         <td class="text-muted fs-12">{{ $t->created_at->format('Y-m-d H:i') }}</td>
                                         <td class="text-end pe-3">
                                             <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-outline-primary btn-xs me-1">
-                                                <i class="mdi mdi-eye-outline me-1"></i>View & Reply
+                                                <i class="mdi mdi-eye-outline me-1"></i>{{ __('messages.view_thread') }}
                                             </a>
                                             <button type="button" class="btn btn-outline-danger btn-xs" onclick="deleteTicket({{ $t->id }}, '{{ $t->ticket_code }}')">
                                                 <i class="mdi mdi-trash-can-outline"></i>
@@ -211,7 +210,7 @@
                                     <tr>
                                         <td colspan="8" class="text-center py-5 text-muted">
                                             <i class="mdi mdi-ticket-outline fs-36 text-muted d-block mb-2"></i>
-                                            <p class="mb-0 fw-semibold text-dark">No support tickets found.</p>
+                                            <p class="mb-0 fw-semibold text-dark">{{ __('messages.no_tickets') }}</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -230,18 +229,19 @@
     function deleteTicket(id, code) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({
-                title: 'Delete Ticket #' + code + '?',
-                text: 'This ticket and all its replies will be permanently deleted.',
+                title: '{{ __("messages.confirm_delete") }}',
+                text: '#' + code,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                confirmButtonText: 'Yes, Delete'
+                confirmButtonText: '{{ __("messages.yes_delete") }}',
+                cancelButtonText: '{{ __("messages.cancel") }}'
             }).then((res) => {
                 if (res.isConfirmed) {
                     $.ajax({
                         url: '/admin/tickets/' + id,
                         type: 'DELETE',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         success: function(resp) {
                             Swal.fire('Deleted!', resp.message, 'success').then(() => {
                                 window.location.href = resp.redirect || window.location.href;

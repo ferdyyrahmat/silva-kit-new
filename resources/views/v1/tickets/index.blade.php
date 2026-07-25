@@ -1,15 +1,15 @@
-@extends('layouts.vertical', ['title' => 'My Support Tickets'])
+@extends('layouts.vertical', ['title' => __('messages.my_tickets')])
 
 @section('content')
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">My Support Tickets</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.my_tickets') }}</h4>
         </div>
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('v1.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Support Tickets</li>
+                <li class="breadcrumb-item"><a href="{{ route('v1.dashboard') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.support_tickets') }}</li>
             </ol>
         </div>
     </div>
@@ -26,9 +26,9 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-3">
-                    <h5 class="card-title mb-0 fw-bold text-body"><i class="mdi mdi-ticket-confirmation-outline text-primary me-1"></i>Submitted Support Requests</h5>
+                    <h5 class="card-title mb-0 fw-bold text-body"><i class="mdi mdi-ticket-confirmation-outline text-primary me-1"></i>{{ __('messages.my_tickets') }}</h5>
                     <button type="button" class="btn btn-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#global-feedback-modal">
-                        <i class="mdi mdi-plus-circle-outline me-1"></i>Create New Ticket
+                        <i class="mdi mdi-plus-circle-outline me-1"></i>{{ __('messages.new_ticket') }}
                     </button>
                 </div>
 
@@ -37,12 +37,12 @@
                         <table class="table table-hover align-middle mb-0 fs-13">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-3">Ticket Code</th>
-                                    <th>Subject / Category</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Last Updated</th>
-                                    <th class="text-end pe-3">Action</th>
+                                    <th class="ps-3">{{ __('messages.ticket_code') }}</th>
+                                    <th>{{ __('messages.subject') }} / {{ __('messages.category') }}</th>
+                                    <th>{{ __('messages.priority') }}</th>
+                                    <th>{{ __('messages.status') }}</th>
+                                    <th>{{ __('messages.timestamp') }}</th>
+                                    <th class="text-end pe-3">{{ __('messages.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,7 +89,7 @@
                                         <td class="text-muted fs-12">{{ $t->updated_at->diffForHumans() }}</td>
                                         <td class="text-end pe-3">
                                             <a href="{{ route('v1.tickets.show', $t->ticket_code) }}" class="btn btn-outline-primary btn-xs">
-                                                <i class="mdi mdi-forum-outline me-1"></i>Track & Reply
+                                                <i class="mdi mdi-forum-outline me-1"></i>{{ __('messages.view_thread') }}
                                             </a>
                                         </td>
                                     </tr>
@@ -97,8 +97,7 @@
                                     <tr>
                                         <td colspan="6" class="text-center py-5 text-muted">
                                             <i class="mdi mdi-ticket-outline fs-36 text-muted d-block mb-2"></i>
-                                            <p class="mb-0 fw-semibold text-dark">You have not submitted any support tickets yet.</p>
-                                            <small>Click "Create New Ticket" or use the floating button to submit a ticket.</small>
+                                            <p class="mb-0 fw-semibold text-dark">{{ __('messages.no_tickets') }}</p>
                                         </td>
                                     </tr>
                                 @endforelse

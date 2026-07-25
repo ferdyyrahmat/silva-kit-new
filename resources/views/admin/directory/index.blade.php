@@ -1,15 +1,15 @@
-@extends('layouts.vertical', ['title' => 'Cloud File Directory (MinIO)'])
+@extends('layouts.vertical', ['title' => __('messages.cloud_directory')])
 
 @section('content')
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Cloud File Directory (MinIO)</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.cloud_directory') }}</h4>
         </div>
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Cloud Directory</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.cloud_directory') }}</li>
             </ol>
         </div>
     </div>
@@ -52,13 +52,13 @@
 
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-outline-secondary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-minio-settings">
-                            <i class="mdi mdi-cog-outline me-1"></i>MinIO Config
+                            <i class="mdi mdi-cog-outline me-1"></i>{{ __('messages.minio_config') }}
                         </button>
                         <button type="button" class="btn btn-outline-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-new-folder">
-                            <i class="mdi mdi-folder-plus-outline me-1"></i>New Folder
+                            <i class="mdi mdi-folder-plus-outline me-1"></i>{{ __('messages.new_folder') }}
                         </button>
                         <button type="button" class="btn btn-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
-                            <i class="mdi mdi-upload me-1"></i>Upload File
+                            <i class="mdi mdi-upload me-1"></i>{{ __('messages.upload_file') }}
                         </button>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                 <ol class="breadcrumb mb-0 fs-13 align-items-center">
                     <li class="breadcrumb-item">
                         <a href="{{ route('admin.directory.index') }}" class="fw-bold text-primary">
-                            <i class="mdi mdi-database me-1"></i>Root Bucket
+                            <i class="mdi mdi-database me-1"></i>{{ __('messages.root_bucket') }}
                         </a>
                     </li>
                     @foreach($breadcrumbs as $b)
@@ -118,7 +118,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-body-tertiary py-3">
                         <h5 class="card-title mb-0 fw-bold text-dark">
-                            <i class="mdi mdi-file-multiple-outline text-primary me-1"></i>Files in {{ empty($currentPath) ? 'Root Bucket' : '/' . $currentPath }}
+                            <i class="mdi mdi-file-multiple-outline text-primary me-1"></i>{{ empty($currentPath) ? __('messages.root_bucket') : __('messages.root_bucket') . ' / ' . $currentPath }}
                         </h5>
                     </div>
 
@@ -127,10 +127,10 @@
                             <table class="table table-hover align-middle mb-0 fs-13">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-3">File Name</th>
-                                        <th>Size</th>
-                                        <th>Last Modified</th>
-                                        <th class="text-end pe-3">Action</th>
+                                        <th class="ps-3">{{ __('messages.file_name') }}</th>
+                                        <th>{{ __('messages.file_size') }}</th>
+                                        <th>{{ __('messages.timestamp') }}</th>
+                                        <th class="text-end pe-3">{{ __('messages.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -146,7 +146,7 @@
                                             <td class="text-muted fs-12"><i class="mdi mdi-clock-outline me-1"></i>{{ $file['last_modified'] }}</td>
                                             <td class="text-end pe-3">
                                                 <a href="{{ route('admin.directory.download', ['path' => $file['path']]) }}" class="btn btn-outline-primary btn-xs me-1">
-                                                    <i class="mdi mdi-download me-1"></i>Download
+                                                    <i class="mdi mdi-download me-1"></i>{{ __('messages.download') }}
                                                 </a>
                                                 <button type="button" class="btn btn-outline-danger btn-xs" onclick="deleteItem('{{ e($file['path']) }}', 'file')">
                                                     <i class="mdi mdi-trash-can-outline"></i>
@@ -167,8 +167,8 @@
                 <div class="card border-0 shadow-sm text-center py-5">
                     <div class="card-body">
                         <i class="mdi mdi-folder-open-outline fs-48 text-muted d-block mb-2"></i>
-                        <h6 class="fw-bold text-dark">This directory is empty.</h6>
-                        <p class="text-muted fs-13 mb-3">Click "Upload File" or "New Folder" to add items to your MinIO bucket.</p>
+                        <h6 class="fw-bold text-dark">{{ __('messages.no_data') }}</h6>
+                        <p class="text-muted fs-13 mb-3">Click "{{ __('messages.upload_file') }}" or "{{ __('messages.new_folder') }}" to add items.</p>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title fw-bold text-white fs-15"><i class="mdi mdi-server-network me-1"></i>MinIO S3 Connection Credentials</h5>
+                <h5 class="modal-title fw-bold text-white fs-15"><i class="mdi mdi-server-network me-1"></i>{{ __('messages.minio_config') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('admin.directory.settings') }}" method="POST">
@@ -226,8 +226,8 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary fw-bold"><i class="mdi mdi-content-save-outline me-1"></i>Save & Connect</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary fw-bold"><i class="mdi mdi-content-save-outline me-1"></i>{{ __('messages.save_settings') }}</button>
                 </div>
             </form>
         </div>
@@ -239,19 +239,19 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title fw-bold text-white fs-15"><i class="mdi mdi-folder-plus-outline me-1"></i>Create New Folder</h5>
+                <h5 class="modal-title fw-bold text-white fs-15"><i class="mdi mdi-folder-plus-outline me-1"></i>{{ __('messages.new_folder') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('admin.directory.folder') }}" method="POST">
                 @csrf
                 <input type="hidden" name="path" value="{{ $currentPath }}">
                 <div class="modal-body">
-                    <label class="form-label fw-semibold fs-13">Folder Name</label>
+                    <label class="form-label fw-semibold fs-13">{{ __('messages.folder_name') }}</label>
                     <input type="text" class="form-control" name="folder_name" required placeholder="e.g. documents">
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm fw-bold">Create Folder</button>
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary btn-sm fw-bold">{{ __('messages.create') }}</button>
                 </div>
             </form>
         </div>
@@ -263,7 +263,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title fw-bold text-white fs-15"><i class="mdi mdi-upload me-1"></i>Upload File to MinIO</h5>
+                <h5 class="modal-title fw-bold text-white fs-15"><i class="mdi mdi-upload me-1"></i>{{ __('messages.upload_file') }}</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('admin.directory.upload') }}" method="POST" enctype="multipart/form-data">
@@ -271,17 +271,17 @@
                 <input type="hidden" name="path" value="{{ $currentPath }}">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold fs-13">Target Path</label>
-                        <input type="text" class="form-control bg-light" readonly value="{{ empty($currentPath) ? 'Root Directory' : '/' . $currentPath }}">
+                        <label class="form-label fw-semibold fs-13">{{ __('messages.target_path') }}</label>
+                        <input type="text" class="form-control bg-light" readonly value="{{ empty($currentPath) ? __('messages.root_bucket') : '/' . $currentPath }}">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold fs-13">Select File</label>
+                        <label class="form-label fw-semibold fs-13">{{ __('messages.select_file') }}</label>
                         <input type="file" class="form-control" name="file" required>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary fw-bold"><i class="mdi mdi-upload me-1"></i>Upload Now</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary fw-bold"><i class="mdi mdi-upload me-1"></i>{{ __('messages.upload_file') }}</button>
                 </div>
             </form>
         </div>
@@ -294,12 +294,13 @@
     function deleteItem(path, type) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({
-                title: 'Delete ' + type + '?',
-                text: 'Are you sure you want to delete ' + path + '?',
+                title: '{{ __("messages.confirm_delete") }}',
+                text: path,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                confirmButtonText: 'Yes, Delete'
+                confirmButtonText: '{{ __("messages.yes_delete") }}',
+                cancelButtonText: '{{ __("messages.cancel") }}'
             }).then((res) => {
                 if (res.isConfirmed) {
                     $.ajax({

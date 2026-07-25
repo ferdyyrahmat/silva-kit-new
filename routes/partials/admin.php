@@ -39,13 +39,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'check_permission'])
       Route::get('', [App\Http\Controllers\System\AuditLog\AuditLogController::class, 'index'])->name('index');
    });
 
-   Route::prefix('feedbacks')->name('feedbacks.')->group(function () {
-      Route::get('', [App\Http\Controllers\System\Feedback\FeedbackController::class, 'index'])->name('index');
-      Route::post('store', [App\Http\Controllers\System\Feedback\FeedbackController::class, 'store'])->name('store');
-      Route::put('{id}/status', [App\Http\Controllers\System\Feedback\FeedbackController::class, 'updateStatus'])->name('update-status');
-      Route::delete('{id}', [App\Http\Controllers\System\Feedback\FeedbackController::class, 'destroy'])->name('destroy');
-   });
-
    Route::prefix('backups')->name('backups.')->group(function () {
       Route::get('', [\App\Http\Controllers\System\Backup\BackupController::class, 'index'])->name('index');
       Route::post('create', [\App\Http\Controllers\System\Backup\BackupController::class, 'create'])->name('create');
@@ -73,6 +66,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'check_permission'])
    });
 
    Route::prefix('settings')->name('settings.')->group(function () {
+      Route::prefix('branding')->name('branding.')->group(function () {
+         Route::get('', [\App\Http\Controllers\System\Setting\BrandingSettingController::class, 'index'])->name('index');
+         Route::post('', [\App\Http\Controllers\System\Setting\BrandingSettingController::class, 'update'])->name('update');
+      });
       Route::prefix('websocket')->name('websocket.')->group(function () {
          Route::get('', [\App\Http\Controllers\System\Setting\WebSocketSettingController::class, 'index'])->name('index');
          Route::post('', [\App\Http\Controllers\System\Setting\WebSocketSettingController::class, 'update'])->name('update');

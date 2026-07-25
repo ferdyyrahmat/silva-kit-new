@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'My Account'])
+@extends('layouts.vertical', ['title' => __('messages.my_account')])
 
 @section('css')
 <style>
@@ -50,13 +50,13 @@
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">My Account</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.my_account') }}</h4>
         </div>
 
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">My Account</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.my_account') }}</li>
             </ol>
         </div>
     </div>
@@ -130,17 +130,17 @@
                     <ul class="nav nav-underline border-bottom pt-2" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active p-2" data-bs-toggle="tab" href="#tab-personal" role="tab">
-                                Personal Details
+                                {{ __('messages.personal_details') }}
                             </a>
                         </li>
                         <li class="nav-item" role="presentation">
                             <a class="nav-link p-2" data-bs-toggle="tab" href="#tab-security" role="tab">
-                                Security & Password
+                                {{ __('messages.security_password') }}
                             </a>
                         </li>
                         <li class="nav-item" role="presentation">
                             <a class="nav-link p-2" data-bs-toggle="tab" href="#tab-permissions" role="tab">
-                                My Permissions Matrix
+                                {{ __('messages.my_permissions') }}
                             </a>
                         </li>
                     </ul>
@@ -155,34 +155,34 @@
 
                                 <div class="row mb-3">
                                     <div class="col-md-6 mb-3 mb-md-0">
-                                        <label for="name" class="form-label fw-medium">Full Name</label>
+                                        <label for="name" class="form-label fw-medium">{{ __('messages.full_name') }}</label>
                                         <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" required placeholder="Your full name">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="email" class="form-label fw-medium">Email Address</label>
+                                        <label for="email" class="form-label fw-medium">{{ __('messages.email_address') }}</label>
                                         <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" required placeholder="Your email address">
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-md-6 mb-3 mb-md-0">
-                                        <label for="phone" class="form-label fw-medium">Phone Number</label>
+                                        <label for="phone" class="form-label fw-medium">{{ __('messages.phone_number') }}</label>
                                         <input type="text" class="form-control" id="phone" name="phone" value="{{ $user->phone }}" placeholder="e.g. +62 812 3456 7890">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="title" class="form-label fw-medium">Job Title / Designation</label>
+                                        <label for="title" class="form-label fw-medium">{{ __('messages.job_title') }}</label>
                                         <input type="text" class="form-control" id="title" name="title" value="{{ $user->title }}" placeholder="e.g. Senior Developer, System Admin">
                                     </div>
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="bio" class="form-label fw-medium">Bio / About Me</label>
+                                    <label for="bio" class="form-label fw-medium">{{ __('messages.bio') }}</label>
                                     <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Write a short summary about your role or background">{{ $user->bio }}</textarea>
                                 </div>
 
                                 <div class="text-end">
                                     <button type="submit" id="btn-save-info" class="btn btn-primary">
-                                        <i class="mdi mdi-content-save-outline me-1"></i>Save Changes
+                                        <i class="mdi mdi-content-save-outline me-1"></i>{{ __('messages.save_changes') }}
                                     </button>
                                 </div>
                             </form>

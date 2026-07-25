@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Roles & Permissions'])
+@extends('layouts.vertical', ['title' => __('messages.roles_permissions')])
 
 @section('css')
     @vite([
@@ -11,13 +11,13 @@
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Roles & Permissions</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.roles_permissions') }}</h4>
         </div>
 
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Roles & Permissions</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.roles_permissions') }}</li>
             </ol>
         </div>
     </div>
@@ -26,8 +26,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Roles List</h5>
-                    <a href="{{ route('admin.permissions.create') }}" class="btn btn-primary btn-sm"><i class="mdi mdi-plus me-1"></i>Add Role & Permissions</a>
+                    <h5 class="card-title mb-0"><i class="mdi mdi-shield-lock me-1"></i>{{ __('messages.roles_permissions') }}</h5>
+                    <a href="{{ route('admin.permissions.create') }}" class="btn btn-primary btn-sm"><i class="mdi mdi-plus me-1"></i>{{ __('messages.create') }}</a>
                 </div><!-- end card header -->
 
                 <div class="card-body">
@@ -35,12 +35,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Role Name</th>
-                                <th>Description</th>
-                                <th>Assigned Permissions</th>
-                                <th>Assigned Users</th>
-                                <th>Created At</th>
-                                <th class="text-center">Actions</th>
+                                <th>{{ __('messages.user_roles') }}</th>
+                                <th>{{ __('messages.description') }}</th>
+                                <th>{{ __('messages.roles_permissions') }}</th>
+                                <th>{{ __('messages.user') }}</th>
+                                <th>{{ __('messages.created_at') }}</th>
+                                <th class="text-center">{{ __('messages.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,13 +85,14 @@
 
         function deleteRole(id, url) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this role!",
+                title: '{{ __("messages.confirm_delete") }}',
+                text: "ID: " + id,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: '{{ __("messages.yes_delete") }}',
+                cancelButtonText: '{{ __("messages.cancel") }}'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -108,19 +109,11 @@
                                     }
                                 });
                             } else {
-                                Swal.fire(
-                                    'Failed!',
-                                    response.message || 'Something went wrong.',
-                                    'error'
-                                );
+                                Swal.fire('Failed!', response.message || 'Something went wrong.', 'error');
                             }
                         },
                         error: function(xhr) {
-                            Swal.fire(
-                                'Error!',
-                                xhr.responseJSON?.message || 'Access Denied or Server Error.',
-                                'error'
-                            );
+                            Swal.fire('Error!', xhr.responseJSON?.message || 'Access Denied or Server Error.', 'error');
                         }
                     });
                 }

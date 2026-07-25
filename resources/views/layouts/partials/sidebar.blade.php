@@ -5,21 +5,26 @@
         <!--- Sidemenu -->
         <div id="sidebar-menu">
 
+@php
+    $logoLight = \App\Models\SystemSetting::getByKey('app_logo_light', '/images/logo-light.png');
+    $logoDark = \App\Models\SystemSetting::getByKey('app_logo_dark', '/images/logo-dark.png');
+    $logoSm = \App\Models\SystemSetting::getByKey('app_logo_sm', '/images/logo-sm.png');
+@endphp
             <div class="logo-box">
                 <a href="{{ route('root')}}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="/images/logo-sm.png" alt="" height="22">
+                        <img src="{{ $logoSm }}" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="/images/logo-light.png" alt="" height="24">
+                        <img src="{{ $logoLight }}" alt="" height="24">
                     </span>
                 </a>
                 <a href="{{ route('root')}}" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="/images/logo-sm.png" alt="" height="22">
+                        <img src="{{ $logoSm }}" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="/images/logo-dark.png" alt="" height="24">
+                        <img src="{{ $logoDark }}" alt="" height="24">
                     </span>
                 </a>
             </div>
@@ -28,34 +33,18 @@
                 <li>
                     <a href="{{ route('root')}}" class="tp-link">
                         <i data-feather="home"></i>
-                        <span> Dashboard </span>
+                        <span> {{ __('messages.dashboard') }} </span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('v1.tickets.index') }}" class="tp-link">
                         <i data-feather="life-buoy"></i>
-                        <span> My Support Tickets </span>
+                        <span> {{ __('messages.my_tickets') }} </span>
                     </a>
                 </li>
 
                 @include('layouts.partials.sidebar.admin')
-
-                <li class="menu-title">Pages</li>
-
-                <li>
-                    <a href="#level" data-bs-toggle="collapse">
-                        <i data-feather="alert-octagon"></i>
-                        <span> Level 1 </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="level">
-                        <ul class="nav-second-level">
-                            <li><a href="#" class="tp-link">Level 2</a></li>
-                        </ul>
-                    </div>
-                </li>
-
             </ul>
 
         </div>

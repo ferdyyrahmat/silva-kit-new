@@ -1,15 +1,15 @@
-@extends('layouts.vertical', ['title' => 'Notification Blast & Multi-Channel Connectors'])
+@extends('layouts.vertical', ['title' => __('messages.blast_title')])
 
 @section('content')
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Notification Blast & Multi-Channel Engine</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.blast_title') }}</h4>
         </div>
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Notification Blast</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.notification_blast') }}</li>
             </ol>
         </div>
     </div>
@@ -54,7 +54,7 @@
                     <div class="card border-0 shadow-sm rounded-3 mb-4">
                         <div class="card-header bg-primary-subtle py-3">
                             <h5 class="card-title mb-0 text-primary fw-bold">
-                                <i class="mdi mdi-send-outline me-1"></i>New Notification Blast
+                                <i class="mdi mdi-send-outline me-1"></i>{{ __('messages.send_blast') }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -63,12 +63,12 @@
                                 <input type="hidden" name="target_id" id="hidden-target-id">
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Title / Subject</label>
+                                    <label class="form-label fw-semibold">{{ __('messages.notif_title') }}</label>
                                     <input type="text" class="form-control" name="title" required placeholder="e.g. System Maintenance Notice">
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Notification Type</label>
+                                    <label class="form-label fw-semibold">Type</label>
                                     <div class="d-flex gap-2">
                                         <label class="btn btn-outline-info btn-sm flex-fill active">
                                             <input type="radio" name="type" value="info" checked class="d-none"> <i class="mdi mdi-information-outline me-1"></i>Info
@@ -86,16 +86,16 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Target Audience</label>
+                                    <label class="form-label fw-semibold">{{ __('messages.target_audience') }}</label>
                                     <select class="form-select mb-2" name="target_type" id="select-target-type">
-                                        <option value="all">🌐 All Users in System</option>
-                                        <option value="role">👥 Specific Role Group</option>
-                                        <option value="user">👤 Specific Individual User</option>
+                                        <option value="all">🌐 {{ __('messages.all_users') }}</option>
+                                        <option value="role">👥 {{ __('messages.user_roles') }}</option>
+                                        <option value="user">👤 {{ __('messages.user') }}</option>
                                     </select>
 
                                     <div id="target-role-container" class="d-none mb-2">
                                         <select class="form-select" id="select-target-role">
-                                            <option value="">-- Select Role Group --</option>
+                                            <option value="">-- Select Role --</option>
                                             @foreach($roles as $role)
                                                 <option value="{{ $role->id }}">{{ $role->name }}</option>
                                             @endforeach
@@ -104,7 +104,7 @@
 
                                     <div id="target-user-container" class="d-none mb-2">
                                         <select class="form-select" id="select-target-user">
-                                            <option value="">-- Select Specific User --</option>
+                                            <option value="">-- Select User --</option>
                                             @foreach($users as $u)
                                                 <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
                                             @endforeach
@@ -114,56 +114,42 @@
 
                                 <!-- Multi-Channel Selection Checkboxes -->
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Notification Channels (Connectors)</label>
+                                    <label class="form-label fw-semibold">{{ __('messages.notification_channels') }}</label>
                                     <div class="card bg-body-tertiary border p-3 rounded-3">
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="channels[]" value="bell" id="chk-bell" checked>
                                             <label class="form-check-label fw-semibold" for="chk-bell">
-                                                <i class="mdi mdi-bell-outline text-primary me-1"></i>In-App Bell & System Inbox
+                                                <i class="mdi mdi-bell-outline text-primary me-1"></i>{{ __('messages.inapp_channel') }}
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="channels[]" value="email" id="chk-email" {{ $connectorSettings['email']['enabled'] ? '' : 'disabled' }}>
                                             <label class="form-check-label fw-semibold {{ $connectorSettings['email']['enabled'] ? '' : 'text-muted' }}" for="chk-email">
-                                                <i class="mdi mdi-email-outline text-info me-1"></i>Email (SMTP Channel)
-                                                @if(!$connectorSettings['email']['enabled'])
-                                                    <span class="badge bg-secondary-subtle text-muted ms-1">Disabled</span>
-                                                @endif
+                                                <i class="mdi mdi-email-outline text-info me-1"></i>{{ __('messages.email_channel') }}
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="channels[]" value="whatsapp" id="chk-whatsapp" {{ $connectorSettings['whatsapp']['enabled'] ? '' : 'disabled' }}>
                                             <label class="form-check-label fw-semibold {{ $connectorSettings['whatsapp']['enabled'] ? '' : 'text-muted' }}" for="chk-whatsapp">
-                                                <i class="mdi mdi-whatsapp text-success me-1"></i>WhatsApp Gateway API
-                                                @if(!$connectorSettings['whatsapp']['enabled'])
-                                                    <span class="badge bg-secondary-subtle text-muted ms-1">Disabled</span>
-                                                @endif
+                                                <i class="mdi mdi-whatsapp text-success me-1"></i>{{ __('messages.wa_channel') }}
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="channels[]" value="telegram" id="chk-telegram" {{ $connectorSettings['telegram']['enabled'] ? '' : 'disabled' }}>
                                             <label class="form-check-label fw-semibold {{ $connectorSettings['telegram']['enabled'] ? '' : 'text-muted' }}" for="chk-telegram">
-                                                <i class="mdi mdi-telegram text-primary me-1"></i>Telegram Bot / Channel
-                                                @if(!$connectorSettings['telegram']['enabled'])
-                                                    <span class="badge bg-secondary-subtle text-muted ms-1">Disabled</span>
-                                                @endif
+                                                <i class="mdi mdi-telegram text-primary me-1"></i>{{ __('messages.telegram_channel') }}
                                             </label>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Message Body</label>
-                                    <textarea class="form-control" name="message" rows="4" required placeholder="Write your broadcast message content here..."></textarea>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Action URL (Optional)</label>
-                                    <input type="url" class="form-control" name="url" placeholder="https://example.com/target-page">
+                                    <label class="form-label fw-semibold">{{ __('messages.notif_message') }}</label>
+                                    <textarea class="form-control" name="message" rows="4" required placeholder="Write message..."></textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary w-100 fw-bold py-2" id="btn-dispatch-blast">
-                                    <i class="mdi mdi-send me-1"></i>Dispatch Notification Blast
+                                    <i class="mdi mdi-send me-1"></i>{{ __('messages.send_blast') }}
                                 </button>
                             </form>
                         </div>
@@ -174,18 +160,18 @@
                 <div class="col-lg-7">
                     <div class="card border-0 shadow-sm rounded-3">
                         <div class="card-header bg-body-tertiary py-3">
-                            <h5 class="card-title mb-0 fw-bold text-body"><i class="mdi mdi-history me-1 text-primary"></i>Broadcast History Log</h5>
+                            <h5 class="card-title mb-0 fw-bold text-body"><i class="mdi mdi-history me-1 text-primary"></i>{{ __('messages.activity_logs') }}</h5>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0 fs-13">
                                     <thead class="table-light">
                                         <tr>
-                                            <th class="ps-3">Blast Details</th>
-                                            <th>Target Audience</th>
-                                            <th>Channels Used</th>
-                                            <th>Sent / Failed</th>
-                                            <th>Date Sent</th>
+                                            <th class="ps-3">{{ __('messages.description') }}</th>
+                                            <th>{{ __('messages.target_audience') }}</th>
+                                            <th>{{ __('messages.notification_channels') }}</th>
+                                            <th>Status</th>
+                                            <th>{{ __('messages.timestamp') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -209,9 +195,6 @@
                                                 </td>
                                                 <td>
                                                     <span class="text-success fw-bold me-1"><i class="mdi mdi-check-circle-outline"></i> {{ $b->sent_count }}</span>
-                                                    @if($b->failed_count > 0)
-                                                        <span class="text-danger fw-bold"><i class="mdi mdi-alert-circle-outline"></i> {{ $b->failed_count }}</span>
-                                                    @endif
                                                 </td>
                                                 <td class="text-muted fs-12">{{ $b->created_at->format('Y-m-d H:i') }}</td>
                                             </tr>
@@ -219,8 +202,7 @@
                                             <tr>
                                                 <td colspan="5" class="text-center py-5 text-muted">
                                                     <i class="mdi mdi-bullhorn-outline fs-36 text-muted d-block mb-2"></i>
-                                                    <p class="mb-0 fw-semibold text-dark">No notification blasts sent yet.</p>
-                                                    <small>Use the form on the left to dispatch your first multi-channel broadcast.</small>
+                                                    <p class="mb-0 fw-semibold text-dark">{{ __('messages.no_data') }}</p>
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -242,7 +224,7 @@
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm rounded-3 h-100">
                             <div class="card-header bg-info-subtle d-flex justify-content-between align-items-center py-3">
-                                <h5 class="card-title mb-0 text-info fw-bold"><i class="mdi mdi-email-outline me-1"></i>SMTP Email Channel</h5>
+                                <h5 class="card-title mb-0 text-info fw-bold"><i class="mdi mdi-email-outline me-1"></i>{{ __('messages.email_channel') }}</h5>
                                 <div class="form-check form-switch mb-0">
                                     <input class="form-check-input" type="checkbox" name="email_enabled" value="1" {{ $connectorSettings['email']['enabled'] ? 'checked' : '' }}>
                                 </div>
@@ -262,7 +244,6 @@
                                         <select class="form-select" name="email_encryption">
                                             <option value="tls" {{ $connectorSettings['email']['encryption'] == 'tls' ? 'selected' : '' }}>TLS</option>
                                             <option value="ssl" {{ $connectorSettings['email']['encryption'] == 'ssl' ? 'selected' : '' }}>SSL</option>
-                                            <option value="none" {{ $connectorSettings['email']['encryption'] == 'none' ? 'selected' : '' }}>None</option>
                                         </select>
                                     </div>
                                 </div>
@@ -275,14 +256,9 @@
                                     <input type="password" class="form-control" name="email_password" placeholder="••••••••">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">From Sender Address</label>
+                                    <label class="form-label fw-semibold">From Address</label>
                                     <input type="email" class="form-control" name="email_from_address" value="{{ $connectorSettings['email']['from_address'] }}">
                                 </div>
-                            </div>
-                            <div class="card-footer bg-light p-3">
-                                <button type="button" class="btn btn-outline-info btn-sm w-100 fw-bold" onclick="testConnector('email')">
-                                    <i class="mdi mdi-send-check me-1"></i>Test SMTP Email Connection
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -291,7 +267,7 @@
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm rounded-3 h-100">
                             <div class="card-header bg-success-subtle d-flex justify-content-between align-items-center py-3">
-                                <h5 class="card-title mb-0 text-success fw-bold"><i class="mdi mdi-whatsapp me-1"></i>WhatsApp Gateway API</h5>
+                                <h5 class="card-title mb-0 text-success fw-bold"><i class="mdi mdi-whatsapp me-1"></i>{{ __('messages.wa_channel') }}</h5>
                                 <div class="form-check form-switch mb-0">
                                     <input class="form-check-input" type="checkbox" name="whatsapp_enabled" value="1" {{ $connectorSettings['whatsapp']['enabled'] ? 'checked' : '' }}>
                                 </div>
@@ -302,7 +278,6 @@
                                     <select class="form-select" name="whatsapp_provider">
                                         <option value="fonnte" {{ $connectorSettings['whatsapp']['provider'] == 'fonnte' ? 'selected' : '' }}>Fonnte API Gateway</option>
                                         <option value="wablas" {{ $connectorSettings['whatsapp']['provider'] == 'wablas' ? 'selected' : '' }}>Wablas API Gateway</option>
-                                        <option value="generic" {{ $connectorSettings['whatsapp']['provider'] == 'generic' ? 'selected' : '' }}>Generic Webhook POST</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -310,14 +285,9 @@
                                     <input type="text" class="form-control" name="whatsapp_api_url" value="{{ $connectorSettings['whatsapp']['api_url'] }}" placeholder="https://api.fonnte.com/send">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">API Token / Secret Key</label>
+                                    <label class="form-label fw-semibold">API Token</label>
                                     <input type="password" class="form-control" name="whatsapp_token" value="{{ $connectorSettings['whatsapp']['token'] }}" placeholder="API Token Key">
                                 </div>
-                            </div>
-                            <div class="card-footer bg-light p-3">
-                                <button type="button" class="btn btn-outline-success btn-sm w-100 fw-bold" onclick="testConnector('whatsapp')">
-                                    <i class="mdi mdi-send-check me-1"></i>Test WhatsApp API Connection
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -326,25 +296,20 @@
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm rounded-3 h-100">
                             <div class="card-header bg-primary-subtle d-flex justify-content-between align-items-center py-3">
-                                <h5 class="card-title mb-0 text-primary fw-bold"><i class="mdi mdi-telegram me-1"></i>Telegram Bot Channel</h5>
+                                <h5 class="card-title mb-0 text-primary fw-bold"><i class="mdi mdi-telegram me-1"></i>{{ __('messages.telegram_channel') }}</h5>
                                 <div class="form-check form-switch mb-0">
                                     <input class="form-check-input" type="checkbox" name="telegram_enabled" value="1" {{ $connectorSettings['telegram']['enabled'] ? 'checked' : '' }}>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Telegram Bot Token</label>
-                                    <input type="password" class="form-control" name="telegram_bot_token" value="{{ $connectorSettings['telegram']['bot_token'] }}" placeholder="123456789:ABCdefGhIJKlmNoPQ">
+                                    <label class="form-label fw-semibold">Bot Token</label>
+                                    <input type="password" class="form-control" name="telegram_bot_token" value="{{ $connectorSettings['telegram']['bot_token'] }}" placeholder="Token">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Default Chat ID / Channel ID</label>
-                                    <input type="text" class="form-control" name="telegram_chat_id" value="{{ $connectorSettings['telegram']['chat_id'] }}" placeholder="-1001234567890 or @channel">
+                                    <label class="form-label fw-semibold">Default Chat ID</label>
+                                    <input type="text" class="form-control" name="telegram_chat_id" value="{{ $connectorSettings['telegram']['chat_id'] }}" placeholder="Chat ID">
                                 </div>
-                            </div>
-                            <div class="card-footer bg-light p-3">
-                                <button type="button" class="btn btn-outline-primary btn-sm w-100 fw-bold" onclick="testConnector('telegram')">
-                                    <i class="mdi mdi-send-check me-1"></i>Test Telegram Bot Connection
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -352,87 +317,11 @@
 
                 <div class="mt-4 text-end">
                     <button type="submit" class="btn btn-primary fw-bold px-4 py-2">
-                        <i class="mdi mdi-content-save-outline me-1"></i>Save All Connector Settings
+                        <i class="mdi mdi-content-save-outline me-1"></i>{{ __('messages.save_settings') }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-@endsection
-
-@section('script-bottom')
-<script>
-    $(document).ready(function() {
-        // Function to update hidden target ID based on selection
-        function syncTargetId() {
-            var val = $('#select-target-type').val();
-            if (val === 'role') {
-                $('#target-role-container').removeClass('d-none');
-                $('#target-user-container').addClass('d-none');
-                $('#hidden-target-id').val($('#select-target-role').val());
-            } else if (val === 'user') {
-                $('#target-user-container').removeClass('d-none');
-                $('#target-role-container').addClass('d-none');
-                $('#hidden-target-id').val($('#select-target-user').val());
-            } else {
-                $('#target-role-container').addClass('d-none');
-                $('#target-user-container').addClass('d-none');
-                $('#hidden-target-id').val('');
-            }
-        }
-
-        // Target Audience Dynamic Selector listeners
-        $('#select-target-type').on('change', syncTargetId);
-        $('#select-target-role').on('change', function() {
-            if ($('#select-target-type').val() === 'role') {
-                $('#hidden-target-id').val($(this).val());
-            }
-        });
-        $('#select-target-user').on('change', function() {
-            if ($('#select-target-type').val() === 'user') {
-                $('#hidden-target-id').val($(this).val());
-            }
-        });
-    });
-
-    // Test Connector Ajax Handler (For live connection testing buttons)
-    function testConnector(channel) {
-        var token = $('input[name="' + channel + '_token"]').val() || $('input[name="' + channel + '_bot_token"]').val();
-        var apiUrl = $('input[name="' + channel + '_api_url"]').val() || $('input[name="' + channel + '_host"]').val();
-        var provider = $('select[name="' + channel + '_provider"]').val();
-
-        Swal.fire({
-            title: 'Test ' + channel.toUpperCase() + ' Connection',
-            text: 'Enter test recipient (email, phone, or chat ID):',
-            input: 'text',
-            inputValue: channel === 'email' ? '{{ Auth::user()->email }}' : (channel === 'whatsapp' ? '6289524424936' : ''),
-            inputPlaceholder: channel === 'email' ? 'your-email@domain.com' : (channel === 'whatsapp' ? '6289524424936' : 'Chat ID'),
-            showCancelButton: true,
-            confirmButtonText: 'Send Test Message',
-            showLoaderOnConfirm: true,
-            preConfirm: (recipient) => {
-                return $.ajax({
-                    url: '{{ route("admin.notifications.test-connector") }}',
-                    type: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    data: {
-                        channel: channel,
-                        recipient: recipient,
-                        token: token,
-                        api_url: apiUrl,
-                        provider: provider
-                    }
-                }).catch(error => {
-                    Swal.showValidationMessage(`Test failed: ${error.responseJSON ? error.responseJSON.message : 'Connection error'}`);
-                });
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if (result.isConfirmed && result.value) {
-                Swal.fire('Connection Successful!', result.value.message, 'success');
-            }
-        });
-    }
-</script>
 @endsection

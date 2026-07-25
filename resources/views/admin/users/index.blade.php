@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'User Management'])
+@extends('layouts.vertical', ['title' => __('messages.user_management')])
 
 @section('css')
     @vite([
@@ -11,13 +11,13 @@
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">User Management</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.user_management') }}</h4>
         </div>
 
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">User Management</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.user_management') }}</li>
             </ol>
         </div>
     </div>
@@ -26,8 +26,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Users List</h5>
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm"><i class="mdi mdi-plus me-1"></i>Add New User</a>
+                    <h5 class="card-title mb-0"><i class="mdi mdi-account-group me-1"></i>{{ __('messages.user_management') }}</h5>
+                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm"><i class="mdi mdi-plus me-1"></i>{{ __('messages.create') }}</a>
                 </div><!-- end card header -->
 
                 <div class="card-body">
@@ -35,11 +35,11 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th>Assigned Roles</th>
-                                <th>Registered At</th>
-                                <th class="text-center">Actions</th>
+                                <th>{{ __('messages.full_name') }}</th>
+                                <th>{{ __('messages.email_address') }}</th>
+                                <th>{{ __('messages.roles_permissions') }}</th>
+                                <th>{{ __('messages.created_at') }}</th>
+                                <th class="text-center">{{ __('messages.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,13 +83,14 @@
 
         function deleteUser(id, url) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this user account!",
+                title: '{{ __("messages.confirm_delete") }}',
+                text: "ID: " + id,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete user!'
+                confirmButtonText: '{{ __("messages.yes_delete") }}',
+                cancelButtonText: '{{ __("messages.cancel") }}'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -106,19 +107,11 @@
                                     }
                                 });
                             } else {
-                                Swal.fire(
-                                    'Failed!',
-                                    response.message || 'Something went wrong.',
-                                    'error'
-                                );
+                                Swal.fire('Failed!', response.message || 'Something went wrong.', 'error');
                             }
                         },
                         error: function(xhr) {
-                            Swal.fire(
-                                'Error!',
-                                xhr.responseJSON?.message || 'Access Denied or Server Error.',
-                                'error'
-                            );
+                            Swal.fire('Error!', xhr.responseJSON?.message || 'Access Denied or Server Error.', 'error');
                         }
                     });
                 }
