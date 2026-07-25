@@ -44,19 +44,14 @@
                 <li class="menu-title">Pages</li>
 
                 <li>
-                    <a href="#sidebarError" data-bs-toggle="collapse">
+                    <a href="#level" data-bs-toggle="collapse">
                         <i data-feather="alert-octagon"></i>
-                        <span> Error Pages </span>
+                        <span> Level 1 </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarError">
+                    <div class="collapse" id="level">
                         <ul class="nav-second-level">
-                            <li><a href="{{ route('error.show', 401) }}" class="tp-link">Error 401</a></li>
-                            <li><a href="{{ route('error.show', 403) }}" class="tp-link">Error 403</a></li>
-                            <li><a href="{{ route('error.show', 404) }}" class="tp-link">Error 404</a></li>
-                            <li><a href="{{ route('error.show', 419) }}" class="tp-link">Error 419</a></li>
-                            <li><a href="{{ route('error.show', 500) }}" class="tp-link">Error 500</a></li>
-                            <li><a href="{{ route('error.show', 503) }}" class="tp-link">Error 503</a></li>
+                            <li><a href="#" class="tp-link">Level 2</a></li>
                         </ul>
                     </div>
                 </li>
