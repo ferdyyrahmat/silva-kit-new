@@ -310,7 +310,7 @@
             });
         }
             // Live Notifications Bell AJAX Polling & Actions
-        function fetchNotifications() {
+        window.fetchNotifications = function() {
             $.ajax({
                 url: "{{ route('notifications.bell.index') }}",
                 type: "GET",
@@ -355,10 +355,15 @@
                     listContainer.html(html);
                 }
             });
-        }
+        };
 
-        fetchNotifications();
-        setInterval(fetchNotifications, 15000); // Poll every 15 seconds
+        window.fetchNotifications();
+
+        if (window.PUSHER_NOTIFICATION_ENABLED) {
+            console.info('Using Pusher for real-time notifications; polling disabled.');
+        } else {
+            setInterval(window.fetchNotifications, 15000); // Poll every 15 seconds when Pusher is unavailable
+        }
 
         window.markNotificationRead = function(id, targetUrl) {
             $.ajax({
@@ -369,7 +374,7 @@
                     if (targetUrl && targetUrl !== 'javascript:void(0);') {
                         window.location.href = targetUrl;
                     } else {
-                        fetchNotifications();
+                        window.fetchNotifications();
                     }
                 }
             });
@@ -390,8 +395,8 @@
                             $('#profile-noti-badge').hide();
                         }
                     });
-                    if (typeof fetchNotifications === 'function') {
-                        fetchNotifications();
+                    if (typeof window.fetchNotifications === 'function') {
+                        window.fetchNotifications();
                     }
                 }
             });
@@ -405,7 +410,7 @@
                 type: "POST",
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 success: function() {
-                    fetchNotifications();
+                    window.fetchNotifications();
                 }
             });
         });
