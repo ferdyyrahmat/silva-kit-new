@@ -51,15 +51,21 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-minio-settings">
-                            <i class="mdi mdi-cog-outline me-1"></i>{{ __('messages.minio_config') }}
-                        </button>
-                        <button type="button" class="btn btn-outline-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-new-folder">
-                            <i class="mdi mdi-folder-plus-outline me-1"></i>{{ __('messages.new_folder') }}
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
-                            <i class="mdi mdi-upload me-1"></i>{{ __('messages.upload_file') }}
-                        </button>
+                        @if(auth()->user()->hasPermission('admin.directory.settings'))
+                            <button type="button" class="btn btn-outline-secondary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-minio-settings">
+                                <i class="mdi mdi-cog-outline me-1"></i>{{ __('messages.minio_config') }}
+                            </button>
+                        @endif
+                        @if(auth()->user()->hasPermission('admin.directory.folder'))
+                            <button type="button" class="btn btn-outline-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-new-folder">
+                                <i class="mdi mdi-folder-plus-outline me-1"></i>{{ __('messages.new_folder') }}
+                            </button>
+                        @endif
+                        @if(auth()->user()->hasPermission('admin.directory.upload'))
+                            <button type="button" class="btn btn-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modal-upload-file">
+                                <i class="mdi mdi-upload me-1"></i>{{ __('messages.upload_file') }}
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>

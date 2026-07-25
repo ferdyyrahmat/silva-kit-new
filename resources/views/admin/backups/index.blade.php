@@ -38,15 +38,17 @@
                         <h5 class="card-title mb-1 text-body fw-bold"><i class="mdi mdi-zip-box-outline text-primary me-1"></i>{{ __('messages.automated_backups') }}</h5>
                         <p class="text-muted fs-13 mb-0">{{ __('messages.backup_desc') }}</p>
                     </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="btn-create-backup-dropdown">
-                            <i class="mdi mdi-plus-circle-outline me-1"></i> {{ __('messages.manual_backup') }} <i class="mdi mdi-chevron-down ms-1"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                            <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="createBackup('db')"><i class="mdi mdi-database-outline me-2 text-primary"></i>{{ __('messages.db_dump') }}</a></li>
-                            <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="createBackup('full')"><i class="mdi mdi-folder-zip-outline me-2 text-success"></i>{{ __('messages.full_backup') }}</a></li>
-                        </ul>
-                    </div>
+                    @if(auth()->user()->hasPermission('admin.backups.create'))
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="btn-create-backup-dropdown">
+                                <i class="mdi mdi-plus-circle-outline me-1"></i> {{ __('messages.manual_backup') }} <i class="mdi mdi-chevron-down ms-1"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="createBackup('db')"><i class="mdi mdi-database-outline me-2 text-primary"></i>{{ __('messages.db_dump') }}</a></li>
+                                <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="createBackup('full')"><i class="mdi mdi-folder-zip-outline me-2 text-success"></i>{{ __('messages.full_backup') }}</a></li>
+                            </ul>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="card-body p-0">

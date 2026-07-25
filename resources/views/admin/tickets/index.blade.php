@@ -7,9 +7,11 @@
             <h4 class="fs-18 fw-semibold m-0">{{ __('messages.manage_support_tickets') }}</h4>
         </div>
         <div class="text-end">
-            <a href="{{ route('admin.tickets.developers.index') }}" class="btn btn-outline-primary btn-sm me-2 fw-bold">
-                <i class="mdi mdi-account-code-outline me-1"></i>{{ __('messages.manage_developers') }}
-            </a>
+            @if(auth()->user()->hasPermission('admin.tickets.developers.index'))
+                <a href="{{ route('admin.tickets.developers.index') }}" class="btn btn-outline-primary btn-sm me-2 fw-bold">
+                    <i class="mdi mdi-account-code-outline me-1"></i>{{ __('messages.manage_developers') }}
+                </a>
+            @endif
             <ol class="breadcrumb m-0 py-0 d-inline-flex align-items-center">
                 <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
                 <li class="breadcrumb-item active">{{ __('messages.support_tickets') }}</li>

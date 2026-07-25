@@ -79,7 +79,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-3">
                     <h5 class="card-title mb-0 fs-15 fw-bold text-body"><i class="mdi mdi-history text-danger me-1"></i>{{ __('messages.failed_jobs') }}</h5>
-                    @if(count($failedJobs) > 0)
+                    @if(count($failedJobs) > 0 && auth()->user()->hasPermission('admin.queues.purge'))
                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="purgeAllFailedJobs()">
                             <i class="mdi mdi-delete-sweep-outline me-1"></i>{{ __('messages.flush_failed') }}
                         </button>
