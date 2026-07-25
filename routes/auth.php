@@ -76,3 +76,17 @@ Route::post('/lockscreen/unlock', [\App\Http\Controllers\Auth\LockscreenControll
 Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+// Socialite OAuth Login Routes
+Route::get('/auth/{provider}/redirect', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirectToProvider'])
+    ->name('oauth.redirect');
+
+Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'handleProviderCallback'])
+    ->name('oauth.callback');
+
+// 2FA Login Challenge Routes
+Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'showChallenge'])
+    ->name('two-factor.challenge');
+
+Route::post('/two-factor-challenge/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verifyChallenge'])
+    ->name('two-factor.challenge.verify');

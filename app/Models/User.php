@@ -6,10 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +25,12 @@ class User extends Authenticatable
         'title',
         'bio',
         'password',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
+        'provider_name',
+        'provider_id',
+        'provider_token',
     ];
 
     /**
@@ -34,6 +41,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'provider_token',
     ];
 
     /**
@@ -46,7 +56,13 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return !empty($this->two_factor_secret) && !is_null($this->two_factor_confirmed_at);
     }
 
     public function getAvatarUrlAttribute(): string
@@ -72,8 +88,23 @@ class User extends Authenticatable
         return $this->hasMany(AuditLog::class);
     }
 
+    public function isDeveloper(): bool
+    {
+        return $this->roles()->where('name', 'Developer')->exists();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->roles()->whereIn('name', ['Developer', 'Admin', 'Administrator'])->exists();
+    }
+
     public function hasPermission(string $routeName): bool
     {
+        // Level 1: Developer has 100% full access to all system routes
+        if ($this->isDeveloper()) {
+            return true;
+        }
+
         return $this->roles()->whereHas('permissions', function ($query) use ($routeName) {
             $query->where('route_name', $routeName);
         })->exists();

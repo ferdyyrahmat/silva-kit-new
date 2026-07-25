@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Audit Trail Logs'])
+@extends('layouts.vertical', ['title' => __('messages.audit_trail')])
 
 @section('css')
     @vite([
@@ -11,13 +11,13 @@
 <div class="container-fluid">
     <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
         <div class="flex-grow-1">
-            <h4 class="fs-18 fw-semibold m-0">Audit Trail Logs</h4>
+            <h4 class="fs-18 fw-semibold m-0">{{ __('messages.audit_trail') }}</h4>
         </div>
 
         <div class="text-end">
             <ol class="breadcrumb m-0 py-0">
-                <li class="breadcrumb-item"><a href="{{ route('root') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Audit Trail</li>
+                <li class="breadcrumb-item"><a href="{{ route('root') }}">{{ __('messages.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">{{ __('messages.audit_trail') }}</li>
             </ol>
         </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="mdi mdi-history me-1"></i>System Activity Logs</h5>
+                    <h5 class="card-title mb-0"><i class="mdi mdi-history me-1"></i>{{ __('messages.activity_logs') }}</h5>
                 </div>
 
                 <div class="card-body">
@@ -34,12 +34,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>User</th>
-                                <th>Event</th>
-                                <th>Description</th>
-                                <th>Module</th>
-                                <th>IP Address</th>
-                                <th>Timestamp</th>
+                                <th>{{ __('messages.user') }}</th>
+                                <th>{{ __('messages.event') }}</th>
+                                <th>{{ __('messages.description') }}</th>
+                                <th>{{ __('messages.module') }}</th>
+                                <th>{{ __('messages.ip_address') }}</th>
+                                <th>{{ __('messages.timestamp') }}</th>
                             </tr>
                         </thead>
                         <tbody>

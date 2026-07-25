@@ -92,8 +92,9 @@ class ProfileController extends Controller
 
         if (!Hash::check($request->current_password, $user->getRawOriginal('password'))) {
             return response()->json([
-                'success' => false,
-                'message' => 'Current password does not match our records.'
+                'success'  => false,
+                'message'  => 'Current password does not match our records.',
+                'redirect' => route('v1.profile.index')
             ]);
         }
 

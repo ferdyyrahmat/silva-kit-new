@@ -95,14 +95,16 @@
                     $.ajax({
                         url: url,
                         type: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}' },
                         success: function(response) {
                             if (response.success) {
-                                Swal.fire(
-                                    'Deleted!',
-                                    response.message,
-                                    'success'
-                                );
-                                $('#users-datatable').DataTable().ajax.reload();
+                                Swal.fire('Deleted!', response.message, 'success').then(() => {
+                                    if (response.redirect) {
+                                        window.location.href = response.redirect;
+                                    } else {
+                                        $('#users-datatable').DataTable().ajax.reload();
+                                    }
+                                });
                             } else {
                                 Swal.fire(
                                     'Failed!',

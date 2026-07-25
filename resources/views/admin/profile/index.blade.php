@@ -74,7 +74,18 @@
                             </label>
                         </div>
                         <div class="text-center text-md-start flex-grow-1">
-                            <h3 class="fw-bold text-dark mb-1" id="profile-name-header">{{ $user->name }}</h3>
+                            <h3 class="fw-bold text-dark mb-1 d-flex align-items-center justify-content-center justify-content-md-start gap-2" id="profile-name-header">
+                                {{ $user->name }}
+                                @if($user->provider_name == 'google')
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-11 font-sans" title="Signed in with Google OAuth">
+                                        <i class="mdi mdi-google me-1"></i>Google
+                                    </span>
+                                @elseif($user->provider_name == 'github')
+                                    <span class="badge bg-dark-subtle text-dark border border-dark-subtle fs-11 font-sans" title="Signed in with GitHub OAuth">
+                                        <i class="mdi mdi-github me-1"></i>GitHub
+                                    </span>
+                                @endif
+                            </h3>
                             <p class="text-muted fs-14 mb-2" id="profile-email-header"><i class="mdi mdi-email-outline me-1"></i>{{ $user->email }}</p>
                             
                             <div class="d-flex flex-wrap gap-2 align-items-center justify-content-center justify-content-md-start mb-2">
@@ -113,17 +124,12 @@
 
     <!-- Navigation Tabs & Content -->
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body pt-0">
                     <ul class="nav nav-underline border-bottom pt-2" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active p-2" data-bs-toggle="tab" href="#tab-notifications" id="tab-notifications-header" role="tab">
-                                Notifications Inbox <span class="badge bg-danger rounded-circle ms-1" id="profile-noti-badge" style="{{ $notifications->where('is_read', false)->count() > 0 ? '' : 'display:none;' }}">{{ $notifications->where('is_read', false)->count() }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link p-2" data-bs-toggle="tab" href="#tab-personal" role="tab">
+                            <a class="nav-link active p-2" data-bs-toggle="tab" href="#tab-personal" role="tab">
                                 Personal Details
                             </a>
                         </li>
@@ -139,59 +145,9 @@
                         </li>
                     </ul>
 
-                    <div class="tab-content text-muted bg-white pt-3">
-
-                        <!-- TAB 1: All Notifications -->
-                        <div class="tab-pane fade show active" id="tab-notifications" role="tabpanel">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h5 class="fw-semibold mb-1">Notification Inbox</h5>
-                                    <p class="text-muted fs-13 mb-0">All activity logs and system notifications sent to your account.</p>
-                                </div>
-                                <button type="button" class="btn btn-outline-danger btn-sm" id="btn-clear-profile-noti">
-                                    <i class="mdi mdi-delete-sweep-outline me-1"></i>Clear All Notifications
-                                </button>
-                            </div>
-
-                            <div class="list-group list-group-flush border rounded-2 overflow-hidden" id="profile-noti-container">
-                                @forelse($notifications as $noti)
-                                    <div class="list-group-item p-3 {{ $noti->is_read ? 'bg-white' : 'bg-light bg-opacity-50' }} border-bottom position-relative noti-profile-item" id="noti-item-{{ $noti->id }}">
-                                        <div class="d-flex align-items-start gap-3 pe-4">
-                                            <div class="avatar-sm flex-shrink-0">
-                                                <span class="avatar-title bg-primary-subtle text-primary rounded-circle fs-20 p-2">
-                                                    <i class="mdi {{ $noti->icon ?? 'mdi-bell-outline' }}"></i>
-                                                </span>
-                                            </div>
-                                            <div class="flex-grow-1 overflow-hidden">
-                                                <div class="d-flex align-items-center justify-content-between mb-1">
-                                                    <h6 class="mb-0 fw-semibold text-dark fs-14">
-                                                        <a href="{{ $noti->url ?? 'javascript:void(0);' }}" onclick="markNotificationRead({{ $noti->id }}, '{{ $noti->url }}')" class="text-dark">
-                                                            {{ $noti->title }}
-                                                        </a>
-                                                        @if(!$noti->is_read)
-                                                            <span class="badge bg-danger rounded-circle p-1 ms-1" style="width: 8px; height: 8px;"> </span>
-                                                        @endif
-                                                    </h6>
-                                                    <span class="text-muted fs-12"><i class="mdi mdi-clock-outline me-1"></i>{{ $noti->created_at ? $noti->created_at->diffForHumans() : 'Just now' }}</span>
-                                                </div>
-                                                <p class="text-muted mb-0 fs-13">{{ $noti->message }}</p>
-                                            </div>
-                                        </div>
-                                        <button type="button" class="btn btn-sm text-muted position-absolute top-0 end-0 me-2 mt-2 border-0" onclick="deleteSingleNotification(event, {{ $noti->id }})" title="Remove notification" style="background: transparent;">
-                                            <i class="mdi mdi-close fs-16"></i>
-                                        </button>
-                                    </div>
-                                @empty
-                                    <div class="text-center py-5">
-                                        <i class="mdi mdi-bell-off-outline text-muted fs-36"></i>
-                                        <p class="text-muted fs-14 mt-2 mb-0">No notifications found in your inbox.</p>
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
-                        
-                        <!-- TAB 2: Personal Details -->
-                        <div class="tab-pane fade" id="tab-personal" role="tabpanel">
+                    <div class="tab-content text-muted pt-3">
+                        <!-- TAB 1: Personal Details -->
+                        <div class="tab-pane show active fade" id="tab-personal" role="tabpanel">
                             <form id="profile-info-form" action="{{ route('v1.profile.update-info') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 
@@ -232,42 +188,124 @@
                             </form>
                         </div>
 
-                        <!-- TAB 3: Security & Password -->
+                        <!-- TAB 2: Security & Password -->
                         <div class="tab-pane fade" id="tab-security" role="tabpanel">
-                            <form id="profile-password-form" action="{{ route('v1.profile.update-password') }}" method="POST">
-                                @csrf
-                                <div class="row mb-3">
-                                    <div class="col-md-6 offset-md-3 mb-3">
-                                        <label for="current_password" class="form-label fw-medium">Current Password</label>
-                                        <input type="password" class="form-control" id="current_password" name="current_password" required placeholder="Enter current password">
+                            <div class="row g-4">
+                                <!-- LEFT COLUMN: Password Change Form -->
+                                <div class="col-lg-6">
+                                    <div class="card border border-light-subtle shadow-sm h-100 mb-0">
+                                        <div class="card-header bg-body-tertiary py-3 border-bottom">
+                                            <h5 class="card-title mb-0 fs-15 fw-bold text-body">
+                                                <i class="mdi mdi-lock-reset text-primary me-1"></i>Change Password
+                                            </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="profile-password-form" action="{{ route('v1.profile.update-password') }}" method="POST">
+                                                @csrf
+                                                <div class="mb-3">
+                                                    <label for="current_password" class="form-label fw-medium">Current Password</label>
+                                                    <input type="password" class="form-control" id="current_password" name="current_password" required placeholder="Enter current password">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="password" class="form-label fw-medium">New Password</label>
+                                                    <input type="password" class="form-control" id="password" name="password" required placeholder="Minimum 8 characters">
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label for="password_confirmation" class="form-label fw-medium">Confirm New Password</label>
+                                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required placeholder="Re-enter new password">
+                                                </div>
+
+                                                <div class="text-end">
+                                                    <button type="submit" id="btn-save-password" class="btn btn-primary px-4">
+                                                        <i class="mdi mdi-key-change me-1"></i>Update Password
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="row mb-3">
-                                    <div class="col-md-6 offset-md-3 mb-3">
-                                        <label for="password" class="form-label fw-medium">New Password</label>
-                                        <input type="password" class="form-control" id="password" name="password" required placeholder="Minimum 8 characters">
+                                <!-- RIGHT COLUMN: 2FA & API Tokens -->
+                                <div class="col-lg-6">
+                                    <!-- 2FA Card -->
+                                    <div class="card border border-light-subtle shadow-sm mb-3">
+                                        <div class="card-header bg-body-tertiary py-3 border-bottom d-flex align-items-center justify-content-between">
+                                            <h5 class="card-title mb-0 fs-15 fw-bold text-body">
+                                                <i class="mdi mdi-shield-key-outline text-primary me-1"></i>Two-Factor Authentication (2FA)
+                                            </h5>
+                                            <div>
+                                                @if(auth()->user()->hasTwoFactorEnabled())
+                                                    <span class="badge bg-success-subtle text-success border border-success px-2 py-1 fs-11 me-1"><i class="mdi mdi-check-circle me-1"></i>Active</span>
+                                                @else
+                                                    <span class="badge bg-secondary-subtle text-secondary px-2 py-1 fs-11 me-1">Disabled</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted fs-13 mb-3">Add an extra layer of security to your account using Google Authenticator or Authy app.</p>
+                                            <div class="text-end">
+                                                @if(auth()->user()->hasTwoFactorEnabled())
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" id="btn-disable-2fa-modal">
+                                                        <i class="mdi mdi-shield-off-outline me-1"></i>Disable 2FA
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btn-setup-2fa">
+                                                        <i class="mdi mdi-qrcode-scan me-1"></i>Enable 2FA
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="row mb-4">
-                                    <div class="col-md-6 offset-md-3">
-                                        <label for="password_confirmation" class="form-label fw-medium">Confirm New Password</label>
-                                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required placeholder="Re-enter new password">
+                                    <!-- Sanctum API Tokens Card -->
+                                    <div class="card border border-light-subtle shadow-sm mb-0">
+                                        <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-2 border-bottom">
+                                            <h5 class="card-title mb-0 fs-15 fw-bold text-body">
+                                                <i class="mdi mdi-key-link text-primary me-1"></i>Personal API Access Tokens
+                                            </h5>
+                                            <button type="button" class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#modal-create-token">
+                                                <i class="mdi mdi-plus me-1"></i>Create Token
+                                            </button>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover table-sm align-middle mb-0 fs-13" id="table-api-tokens">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th class="ps-3">Token Name</th>
+                                                            <th>Created At</th>
+                                                            <th class="text-end pe-3">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse(auth()->user()->tokens as $token)
+                                                            <tr id="token-row-{{ $token->id }}">
+                                                                <td class="ps-3 fw-semibold text-dark">{{ $token->name }}</td>
+                                                                <td class="text-muted">{{ $token->created_at->format('Y-m-d H:i') }}</td>
+                                                                <td class="text-end pe-3">
+                                                                    <button type="button" class="btn btn-outline-danger btn-xs" onclick="revokeApiToken({{ $token->id }})">Revoke</button>
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr id="no-tokens-row">
+                                                                <td colspan="3" class="text-center text-muted py-4 fs-13">
+                                                                    <i class="mdi mdi-key-outline fs-24 text-muted d-block mb-1"></i>
+                                                                    No active API tokens found.
+                                                                </td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 offset-md-3 text-end">
-                                        <button type="submit" id="btn-save-password" class="btn btn-primary">
-                                            <i class="mdi mdi-key-change me-1"></i>Update Password
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
                         </div>
 
-                        <!-- TAB 4: Permissions Matrix -->
+                        <!-- TAB 3: Permissions Matrix -->
                         <div class="tab-pane fade" id="tab-permissions" role="tabpanel">
                             <div class="row mb-3">
                                 <div class="col-12">
@@ -280,18 +318,18 @@
                                 @forelse($groupedPermissions as $group => $perms)
                                     <div class="col">
                                         <div class="card h-100 border border-light-subtle shadow-none">
-                                            <div class="card-header bg-light py-2">
+                                            <div class="card-header bg-body-tertiary py-2">
                                                 <h6 class="m-0 fw-semibold text-primary"><i class="mdi mdi-folder-lock-outline me-1"></i>{{ $group }}</h6>
                                             </div>
                                             <div class="card-body py-2">
                                                 <ul class="list-group list-group-flush">
                                                     @foreach($perms as $p)
-                                                        <li class="list-group-item px-0 py-2 border-0 d-flex justify-content-between align-items-center">
+                                                        <li class="list-group-item px-0 py-2 border-0 d-flex justify-content-between align-items-center bg-transparent">
                                                             <div>
-                                                                <span class="fw-semibold text-dark fs-13">{{ $p->name }}</span>
+                                                                <span class="fw-semibold text-body fs-13">{{ $p->name }}</span>
                                                                 <span class="text-muted d-block fs-11">{{ $p->route_name }}</span>
                                                             </div>
-                                                            <span class="badge bg-light text-success fs-11"><i class="mdi mdi-check-circle-outline me-1"></i>Allowed</span>
+                                                            <span class="badge bg-success-subtle text-success fs-11"><i class="mdi mdi-check-circle-outline me-1"></i>Allowed</span>
                                                         </li>
                                                     @endforeach
                                                 </ul>
@@ -307,6 +345,57 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-semibold mb-1">Notification Inbox</h5>
+                            <p class="text-muted fs-13 mb-0">All activity logs and system notifications sent to your account.</p>
+                        </div>
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="btn-clear-profile-noti">
+                            <i class="mdi mdi-delete-sweep-outline me-1"></i>Clear All
+                        </button>
+                    </div>
+
+                    <div class="list-group list-group-flush border rounded-2 overflow-hidden" id="profile-noti-container">
+                        @forelse($notifications as $noti)
+                            <div class="list-group-item p-3 {{ $noti->is_read ? '' : 'bg-body-tertiary' }} border-bottom position-relative noti-profile-item" id="noti-item-{{ $noti->id }}">
+                                <div class="d-flex align-items-start gap-3 pe-4">
+                                    <div class="avatar-sm flex-shrink-0">
+                                        <span class="avatar-title bg-primary-subtle text-primary rounded-circle fs-20 p-2">
+                                            <i class="mdi {{ $noti->icon ?? 'mdi-bell-outline' }}"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <h6 class="mb-0 fw-semibold text-body fs-14">
+                                                <a href="{{ $noti->url ?? 'javascript:void(0);' }}" onclick="markNotificationRead({{ $noti->id }}, '{{ $noti->url }}')" class="text-body">
+                                                    {{ $noti->title }}
+                                                </a>
+                                                @if(!$noti->is_read)
+                                                    <span class="badge bg-danger rounded-circle p-1 ms-1" style="width: 8px; height: 8px;"> </span>
+                                                @endif
+                                            </h6>
+                                            <span class="text-muted fs-12"><i class="mdi mdi-clock-outline me-1"></i>{{ $noti->created_at ? $noti->created_at->diffForHumans() : 'Just now' }}</span>
+                                        </div>
+                                        <p class="text-muted mb-0 fs-13">{{ $noti->message }}</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm text-muted position-absolute top-0 end-0 me-2 mt-2 border-0" onclick="deleteSingleNotification(event, {{ $noti->id }})" title="Remove notification" style="background: transparent;">
+                                    <i class="mdi mdi-close fs-16"></i>
+                                </button>
+                            </div>
+                        @empty
+                            <div class="text-center py-5">
+                                <i class="mdi mdi-bell-off-outline text-muted fs-36"></i>
+                                <p class="text-muted fs-14 mt-2 mb-0">No notifications found in your inbox.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -425,6 +514,216 @@
                 activeTab.tab('show');
             }
         }
+
+        // Enable 2FA Setup Button Click
+        $('#btn-setup-2fa').on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Generating...');
+
+            $.ajax({
+                url: "{{ route('v1.profile.2fa.generate') }}",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function(res) {
+                    btn.prop('disabled', false).html('<i class="mdi mdi-qrcode-scan me-1"></i>Enable 2FA');
+                    if (res.success) {
+                        $('#container-2fa-qr').html(res.qr_code_svg);
+                        $('#text-2fa-secret').text(res.secret);
+                        
+                        var recoveryHtml = '';
+                        res.recovery_codes.forEach(function(code) {
+                            recoveryHtml += '<div class="col-6"><code class="fs-12 text-dark">' + code + '</code></div>';
+                        });
+                        $('#container-2fa-recovery').html(recoveryHtml);
+
+                        var modal = new bootstrap.Modal(document.getElementById('modal-setup-2fa'));
+                        modal.show();
+                    }
+                },
+                error: function() {
+                    btn.prop('disabled', false).html('<i class="mdi mdi-qrcode-scan me-1"></i>Enable 2FA');
+                    Swal.fire('Error!', 'Failed to generate 2FA setup.', 'error');
+                }
+            });
+        });
+
+        // Confirm 2FA Code Form Submit
+        $('#form-confirm-2fa').on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#btn-confirm-2fa');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Verifying...');
+
+            $.ajax({
+                url: "{{ route('v1.profile.2fa.confirm') }}",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: $(this).serialize(),
+                success: function(res) {
+                    btn.prop('disabled', false).text('Activate 2FA');
+                    if (res.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('modal-setup-2fa')).hide();
+                        Swal.fire('Activated!', res.message, 'success').then(() => window.location.reload());
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).text('Activate 2FA');
+                    var msg = xhr.responseJSON?.message || 'Invalid code entered.';
+                    Swal.fire('Failed!', msg, 'error');
+                }
+            });
+        });
+
+        // Disable 2FA Modal Trigger
+        $('#btn-disable-2fa-modal').on('click', function() {
+            Swal.fire({
+                title: 'Disable Two-Factor Authentication?',
+                text: 'Please enter your current account password to disable 2FA:',
+                input: 'password',
+                inputAttributes: { autocapitalize: 'off', required: 'required' },
+                showCancelButton: true,
+                confirmButtonText: 'Disable 2FA',
+                confirmButtonColor: '#d33',
+                showLoaderOnConfirm: true,
+                preConfirm: (password) => {
+                    return $.ajax({
+                        url: "{{ route('v1.profile.2fa.disable') }}",
+                        type: "POST",
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        data: { current_password: password }
+                    }).catch(error => {
+                        Swal.showValidationMessage(error.responseJSON?.message || 'Request failed');
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value?.success) {
+                    Swal.fire('Disabled!', result.value.message, 'success').then(() => window.location.reload());
+                }
+            });
+        });
+
+        // Create Sanctum API Token
+        $('#form-create-token').on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#btn-save-token');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Creating...');
+
+            $.ajax({
+                url: "{{ route('v1.profile.tokens.store') }}",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: $(this).serialize(),
+                success: function(res) {
+                    btn.prop('disabled', false).text('Create Token');
+                    if (res.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('modal-create-token')).hide();
+                        $('#no-tokens-row').remove();
+
+                        var newRow = '<tr id="token-row-' + res.token_id + '">' +
+                            '<td class="fw-semibold">' + res.name + '</td>' +
+                            '<td class="text-muted">' + res.created_at + '</td>' +
+                            '<td class="text-end"><button type="button" class="btn btn-outline-danger btn-xs" onclick="revokeApiToken(' + res.token_id + ')">Revoke</button></td>' +
+                            '</tr>';
+                        $('#table-api-tokens tbody').prepend(newRow);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'API Token Created!',
+                            html: '<p>Please copy your secret key now. It will not be shown again:</p><input type="text" class="form-control text-center font-monospace" value="' + res.token_key + '" readonly onclick="this.select(); document.execCommand(\'copy\'); Swal.fire(\'Copied!\', \'Token copied to clipboard.\', \'success\');">'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).text('Create Token');
+                    Swal.fire('Error!', xhr.responseJSON?.message || 'Failed to create token.', 'error');
+                }
+            });
+        });
+
+        window.revokeApiToken = function(id) {
+            Swal.fire({
+                title: 'Revoke API Token?',
+                text: 'Applications using this API token will immediately lose access.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, Revoke!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/v1/profile/tokens/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        success: function(res) {
+                            $('#token-row-' + id).fadeOut(300, function() { $(this).remove(); });
+                            Swal.fire('Revoked!', res.message, 'success');
+                        }
+                    });
+                }
+            });
+        };
     });
 </script>
+
+<!-- MODAL: Setup 2FA -->
+<div class="modal fade" id="modal-setup-2fa" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="mdi mdi-qrcode-scan text-primary me-1"></i>Setup Two-Factor Authentication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="text-muted fs-13 mb-3">Scan this QR Code with your Google Authenticator or Authy app on your mobile phone.</p>
+
+                <div class="p-3 bg-light rounded-3 d-inline-block mb-3 border" id="container-2fa-qr">
+                    <!-- QR Code SVG injected via JS -->
+                </div>
+
+                <p class="text-muted fs-12 mb-1">Secret Key (if manual entry needed):</p>
+                <div class="badge bg-secondary-subtle text-dark fs-14 font-monospace px-3 py-2 mb-3" id="text-2fa-secret"></div>
+
+                <div class="text-start bg-light p-3 rounded-3 mb-3 border">
+                    <h6 class="fw-bold fs-12 mb-2 text-danger"><i class="mdi mdi-alert-circle-outline me-1"></i>Emergency Recovery Codes</h6>
+                    <p class="text-muted fs-11 mb-2">Keep these codes in a safe place. If you lose your phone, you can use one of these to log in:</p>
+                    <div class="row g-1" id="container-2fa-recovery"></div>
+                </div>
+
+                <form id="form-confirm-2fa">
+                    <div class="mb-3 text-start">
+                        <label for="input-2fa-code" class="form-label fw-semibold fs-13">Enter 6-Digit Verification Code</label>
+                        <input type="text" class="form-control text-center font-monospace fs-18" id="input-2fa-code" name="code" placeholder="000000" maxlength="6" required autocomplete="off">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" id="btn-confirm-2fa">Activate 2FA</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Create Sanctum API Token -->
+<div class="modal fade" id="modal-create-token" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="mdi mdi-key-plus text-primary me-1"></i>Create Personal API Token</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form-create-token">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="token_name" class="form-label fw-semibold">Token Name / Description</label>
+                        <input type="text" class="form-control" id="token_name" name="token_name" required placeholder="e.g. Mobile App Token, Testing Script">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-token">Create Token</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
+

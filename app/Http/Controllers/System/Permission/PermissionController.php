@@ -205,8 +205,9 @@ class PermissionController extends Controller
         \App\Models\AuditLog::log('role.delete', "Deleted role '{$roleName}'", 'role');
 
         return response()->json([
-            'success' => true,
-            'message' => 'Role deleted successfully!'
+            'success'  => true,
+            'message'  => 'Role deleted successfully!',
+            'redirect' => route('admin.permissions.index')
         ]);
     }
 

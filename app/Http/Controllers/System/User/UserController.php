@@ -176,8 +176,9 @@ class UserController extends Controller
         \App\Models\AuditLog::log('user.delete', "Deleted user '{$deletedName}'", 'user', ['user_id' => $id]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'User deleted successfully!'
+            'success'  => true,
+            'message'  => 'User deleted successfully!',
+            'redirect' => route('admin.users.index')
         ]);
     }
 }

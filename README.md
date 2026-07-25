@@ -25,7 +25,36 @@
 - Node.js >= 18 & npm
 - MySQL
 
-### Step-by-step
+### 🐳 Docker Quickstart (Recommended)
+
+#### 1. Development Mode (with Live Reload, MySQL & MinIO)
+
+```bash
+# Copy Docker environment template
+cp .env.docker.example .env
+
+# Start containers (App, Nginx, MySQL, MinIO, Auto-Bucket Init)
+docker compose up -d --build
+
+# Run database migrations & seeders inside container
+docker compose exec app php artisan migrate --seed
+```
+
+- 🌐 **Web Application**: [http://localhost:8080](http://localhost:8080)
+- 🗄️ **MySQL Database**: `localhost:3306` (`DB_DATABASE=silva_kit`)
+- 🪣 **MinIO Console (Object Storage Dashboard)**: [http://localhost:9001](http://localhost:9001) (`user: minioadmin / pass: minioadmin`)
+- 📦 **MinIO S3 API Endpoint**: `http://localhost:9000` (Default bucket: `silva-bucket`)
+
+#### 2. Production Deployment Mode
+
+```bash
+# Start Production Containers (OPcache Optimized, Assets Prebuilt)
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+---
+
+### Local Bare-Metal Setup
 
 ```bash
 # 1. Clone the repository
@@ -44,41 +73,11 @@ cp .env.example .env
 # 5. Generate application key
 php artisan key:generate
 
-# 6. Configure your database in .env
-#    For MySQL:
-#    DB_CONNECTION=mysql
-#    DB_HOST=127.0.0.1
-#    DB_PORT=3306
-#    DB_DATABASE=silva_kit
-#    DB_USERNAME=root
-#    DB_PASSWORD=
-#
-#    For SQLite (default):
-#    DB_CONNECTION=sqlite
+# 6. Run database migrations & seed default data
+php artisan migrate --seed
 
-# 7. Run database migrations
-php artisan migrate
-
-# 8. Seed default data (admin user, permissions, etc.)
-php artisan db:seed
-
-# 9. Create storage symlink
-php artisan storage:link
-
-# 10. Build frontend assets
+# 7. Build frontend assets & start server
 npm run build
-
-# 11. Start the development server
-php artisan serve
-```
-
-### Development Mode (Hot Reload)
-
-```bash
-# Run Vite dev server for hot module replacement
-npm run dev
-
-# In a separate terminal, run Laravel server
 php artisan serve
 ```
 
@@ -151,8 +150,20 @@ php artisan serve
 - Non-authorized users will be presented with a beautiful, themed `pages-maintenance` view
 - Persisted dynamically in database utilizing `system_settings` table
 
-### 💬 Feedback Management (Admin)
-- CRUD feedback entries via admin panel
+### 🛡️ Two-Factor Authentication (2FA) & Social Login
+- Two-Factor Authentication (2FA) via TOTP Authenticator apps (Google Authenticator / Authy) with SVG QR code rendering and emergency recovery codes
+- Socialite OAuth Login integration for Google and GitHub accounts
+
+### 🔑 API Engine & Swagger OpenAPI Documentation
+- Laravel Sanctum Personal Access Token Manager
+- Interactive OpenAPI / Swagger REST API documentation auto-generated at `/api/documentation`
+
+### 📊 System Health Monitor Widget
+- Live server metrics card container on Admin Dashboard: Database latency check, MinIO Object Storage connection, RAM memory usage, Disk space capacity
+
+### 💾 Automated Backup Engine
+- Database & asset backup management with MinIO S3 object storage synchronization via `spatie/laravel-backup`
+- Manual backup trigger & zip archive download from Admin Panel (`/admin/backups`)
 
 ---
 
@@ -165,16 +176,18 @@ silva-kit-new/
 │   │   └── helpers.php           # Global helper functions (send_notification, audit_log)
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Auth/             # Login, Register, Lockscreen
+│   │   │   ├── Api/              # REST API & Swagger Controllers
+│   │   │   ├── Auth/             # Login, Register, Lockscreen, 2FA, Socialite OAuth
 │   │   │   ├── Dashboard/        # Dashboard controller
 │   │   │   └── System/           # System modules
 │   │   │       ├── AuditLog/     # Audit Trail controller
+│   │   │       ├── Backup/       # Backup Manager controller
 │   │   │       ├── Feedback/
 │   │   │       ├── Language/      # Language & Theme toggle
 │   │   │       ├── Maintenance/
 │   │   │       ├── Notification/ # Bell & Blast notification controllers
 │   │   │       ├── Permission/
-│   │   │       ├── Profile/       # Profile controller
+│   │   │       ├── Profile/       # Profile & Sanctum token controller
 │   │   │       ├── Search/        # Global search controller
 │   │   │       └── User/
 │   │   └── Middleware/
@@ -182,13 +195,23 @@ silva-kit-new/
 │   │       ├── CheckMaintenanceMode.php
 │   │       ├── CheckPermission.php
 │   │       └── SetLocale.php
-│   └── Models/
-│       ├── AuditLog.php
-│       ├── Permission.php
-│       ├── Role.php
-│       ├── SystemNotification.php
-│       ├── SystemSetting.php
-│       └── User.php
+│   ├── Models/
+│   │   ├── AuditLog.php
+│   │   ├── Permission.php
+│   │   ├── Role.php
+│   │   ├── SystemNotification.php
+│   │   ├── SystemSetting.php
+│   │   └── User.php
+│   └── Services/
+│       ├── SystemHealthService.php
+│       └── TwoFactorService.php
+├── docker/
+│   ├── nginx/                    # Development & Production Nginx configurations
+│   ├── php/                      # Production OPcache configuration
+│   ├── Dockerfile.dev
+│   ├── Dockerfile.prod
+│   ├── entrypoint.sh
+│   └── entrypoint.prod.sh
 ├── database/
 │   ├── migrations/
 │   └── seeders/
@@ -199,16 +222,18 @@ silva-kit-new/
 │   ├── scss/                     # Custom SCSS styles
 │   └── views/
 │       ├── admin/                # Admin module views
-│       ├── auth/                 # Auth views
+│       ├── auth/                 # Auth & 2FA challenge views
 │       └── layouts/              # Layout & partials
 ├── routes/
 │   ├── web.php                   # Main routes
-│   ├── auth.php                  # Auth routes
+│   ├── api.php                   # Sanctum API routes
+│   ├── auth.php                  # Auth & Socialite OAuth routes
 │   └── partials/
 │       ├── admin.php             # Admin-only routes
 │       └── user.php              # General user routes
-└── public/
-    └── images/
+├── docker-compose.yml            # Development Docker setup (MySQL 8.0, MinIO, App, Web)
+├── docker-compose.prod.yml       # Production Docker setup
+└── .env.docker.example           # Docker environment template
 ```
 
 ---
@@ -218,18 +243,18 @@ silva-kit-new/
 **Date:** 24 July 2026
 
 ### ✨ What's New
+- ✅ **Docker Ready (Dev & Prod)** — Complete containerization with PHP 8.2-FPM, Nginx, MySQL 8.0, and MinIO Object Storage
+- ✅ **Two-Factor Authentication (2FA)** — TOTP QR code setup with Google Authenticator & recovery code verification challenge
+- ✅ **Socialite OAuth Login** — Sign in with Google & GitHub out-of-the-box
+- ✅ **Sanctum API Engine** — Personal Access Token generation & management
+- ✅ **Interactive OpenAPI / Swagger Docs** — Auto-generated REST API documentation at `/api/documentation`
+- ✅ **System Health Monitoring** — Live server metrics (DB latency, MinIO status, RAM, Disk usage) on Admin Dashboard
+- ✅ **Automated Backup Engine** — System backup manager with MinIO S3 sync & zip file downloads (`/admin/backups`)
 - ✅ **Dark Mode** — Full dark/light theme toggle with session persistence
 - ✅ **Multi-Language (i18n)** — ID/EN language switcher with click-to-toggle UI
-- ✅ **Global Search** — Real-time AJAX search bar with direct navigation
-- ✅ **SweetAlert2 Modern Styling** — Themed alerts matching Silva template design
-- ✅ **Profile Refactor** — Profile routes moved to `v1.profile.*` (accessible by all users)
-- ✅ **Avatar Upload** — Center-cropped circular avatar with `object-fit: cover`
-- ✅ **Lock Screen Avatar** — Dynamic avatar on lock screen page
-- ✅ **Profile Tabs & Inbox** — Includes Personal Details, Security & Password, Granted Access Matrix, and **All Notifications Inbox**
-- ✅ **Global Helpers** — Easy-to-use `send_notification()` and `audit_log()` functions registered globally in Composer
-- ✅ **Notification Bell System** — Real-time notification updates for user role changes, profile updates, with unread count badge & AJAX polling
-- ✅ **Audit Trail System** — Comprehensive activity logging for login/logout, user creation/updates, role assignments, and maintenance toggles with dedicated DataTables view (`/admin/audit-logs`)
-- ✅ **Maintenance Mode** — On/Off configuration settings panel allowing login gate bypass only for **Administrator** role
+- ✅ **Notification Bell System** — Real-time notification updates for user role changes, profile updates, with unread count badge & inbox tab
+- ✅ **Audit Trail System** — Comprehensive activity logging for login/logout, user creation/updates, role assignments, and maintenance toggles with DataTables view (`/admin/audit-logs`)
+- ✅ **Maintenance Mode** — On/Off configuration settings panel allowing login gate bypass for **Administrator** role
 
 ---
 

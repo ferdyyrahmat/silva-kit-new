@@ -9,7 +9,92 @@
         </div>
     </div>
 
-    <!-- start row -->
+    <!-- Start System Health Widgets -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar-sm bg-primary-subtle text-primary rounded-circle me-3 d-flex align-items-center justify-content-center">
+                            <i class="mdi mdi-database-check fs-22"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted text-uppercase mb-0 fs-12 fw-bold">Database Latency</h6>
+                            <h4 class="mb-0 text-dark fw-bold">{{ $healthMetrics['db_latency_ms'] }} <span class="fs-13 fw-normal text-muted">ms</span></h4>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="badge bg-success-subtle text-success border border-success"><i class="mdi mdi-check-circle me-1"></i>{{ $healthMetrics['db_status'] }}</span>
+                        <span class="text-muted fs-11">MySQL Engine</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar-sm bg-info-subtle text-info rounded-circle me-3 d-flex align-items-center justify-content-center">
+                            <i class="mdi mdi-cloud-check-outline fs-22"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted text-uppercase mb-0 fs-12 fw-bold">Object Storage (MinIO)</h6>
+                            <h4 class="mb-0 text-dark fw-bold fs-16">{{ $healthMetrics['storage_status'] }}</h4>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="text-muted fs-12">S3 Driver</span>
+                        <span class="badge bg-info-subtle text-info">Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar-sm bg-warning-subtle text-warning rounded-circle me-3 d-flex align-items-center justify-content-center">
+                            <i class="mdi mdi-memory fs-22"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted text-uppercase mb-0 fs-12 fw-bold">RAM Memory Usage</h6>
+                            <h4 class="mb-0 text-dark fw-bold">{{ $healthMetrics['memory_used_mb'] }} <span class="fs-13 fw-normal text-muted">MB</span></h4>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="text-muted fs-11">Peak: {{ $healthMetrics['memory_peak_mb'] }} MB</span>
+                        <span class="text-muted fs-11">PHP {{ $healthMetrics['php_version'] }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar-sm bg-danger-subtle text-danger rounded-circle me-3 d-flex align-items-center justify-content-center">
+                            <i class="mdi mdi-harddisk fs-22"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted text-uppercase mb-0 fs-12 fw-bold">Disk Space Used</h6>
+                            <h4 class="mb-0 text-dark fw-bold">{{ $healthMetrics['disk_used_percent'] }}%</h4>
+                        </div>
+                    </div>
+                    <div class="progress progress-sm mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ $healthMetrics['disk_used_percent'] }}%" aria-valuenow="{{ $healthMetrics['disk_used_percent'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted fs-11">Free: {{ $healthMetrics['disk_free_gb'] }} GB</span>
+                        <span class="text-muted fs-11">Total: {{ $healthMetrics['disk_total_gb'] }} GB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End System Health Widgets -->
     <div class="row">
         <div class="col-md-12 col-xl-7">
             <div class="card">

@@ -1,0 +1,66 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Silva Kit REST API Documentation",
+        "description": "Enterprise REST API Documentation for Silva Kit Starter Kit",
+        "contact": {
+            "name": "Ferdy Rahmat",
+            "email": "ferdyyrahmat@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Artisan Server (Port 8000)"
+        },
+        {
+            "url": "http://localhost:8080",
+            "description": "Development Docker Server (Port 8080)"
+        },
+        {
+            "url": "/",
+            "description": "Current Host Domain"
+        }
+    ],
+    "paths": {
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Get Authenticated User Profile",
+                "operationId": "b79913183777908d093da6e9ef3d1515",
+                "responses": {
+                    "200": {
+                        "description": "User profile details returned successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated API request"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Enter your Sanctum Personal Access Token",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "User Profile",
+            "description": "User Profile"
+        }
+    ]
+}

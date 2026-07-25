@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID', 'demo-google-client-id'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET', 'demo-google-client-secret'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', 'http://localhost:8000/auth/google/callback'),
+    ],
+
+    'github' => [
+        'client_id' => env('GITHUB_CLIENT_ID', 'demo-github-client-id'),
+        'client_secret' => env('GITHUB_CLIENT_SECRET', 'demo-github-client-secret'),
+        'redirect' => env('GITHUB_REDIRECT_URI', 'http://localhost:8000/auth/github/callback'),
+    ],
+
 ];

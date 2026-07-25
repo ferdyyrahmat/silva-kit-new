@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # Laravel PHP-FPM Application
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: silva-app-dev
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-silva_kit}
+      - DB_USERNAME=${DB_USERNAME:-silva_user}
+      - DB_PASSWORD=${DB_PASSWORD:-silva_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - minio
+    networks:
+      - silva-network
+
+  # Nginx Web Server
+  web:
+    image: nginx:alpine
+    container_name: silva-web-dev
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+      - "5173:5173" # Vite HMR port
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - silva-network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: silva-db-dev
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-silva_kit}
+      MYSQL_USER: ${DB_USERNAME:-silva_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-silva_password}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+    volumes:
+      - silva-dbdata:/var/lib/mysql
+    networks:
+      - silva-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+
+  # Redis Cache & Queue Engine
+  redis:
+    image: redis:7-alpine
+    container_name: silva-redis-dev
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_REDIS_PORT:-6379}:6379"
+    volumes:
+      - silva-redisdata:/data
+    networks:
+      - silva-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 5s
+      retries: 5
+
+  # Asynchronous Task Queue Worker Service
+  queue-worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: silva-queue-worker-dev
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work redis --tries=3 --timeout=90
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-silva_kit}
+      - DB_USERNAME=${DB_USERNAME:-silva_user}
+      - DB_PASSWORD=${DB_PASSWORD:-silva_password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - db
+      - redis
+    networks:
+      - silva-network
+
+  # MinIO Object Storage (S3 Compatible)
+  minio:
+    image: minio/minio:latest
+    container_name: silva-minio-dev
+    restart: unless-stopped
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    command: server /data --console-address ":9001"
+    volumes:
+      - silva-miniodata:/data
+    networks:
+      - silva-network
+
+  # Automatic MinIO Bucket Initialization Job
+  minio-init:
+    image: minio/mc:latest
+    container_name: silva-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin}; do echo 'Waiting for MinIO...'; sleep 2; done;
+      /usr/bin/mc mb --ignore-existing myminio/${AWS_BUCKET:-silva-bucket};
+      /usr/bin/mc anonymous set download myminio/${AWS_BUCKET:-silva-bucket};
+      echo 'MinIO Bucket ready!';
+      "
+    networks:
+      - silva-network
+
+networks:
+  silva-network:
+    driver: bridge
+
+volumes:
+  silva-dbdata:
+    driver: local
+  silva-redisdata:
+    driver: local
+  silva-miniodata:
+    driver: local

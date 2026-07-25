@@ -15,7 +15,7 @@
                 <li class="ms-lg-3 topbar-maintenance-item">
                     <span class="badge bg-danger-subtle text-danger border border-danger d-inline-flex align-items-center px-2 py-1 fs-12 fw-semibold topbar-maintenance-badge">
                         <span class="spinner-grow spinner-grow-sm text-danger me-1" role="status" style="width: 8px; height: 8px; animation-duration: 1.2s;"></span>
-                        MAINTENANCE MODE ACTIVE
+                        {{ __('messages.maintenance_active') }}
                     </span>
                 </li>
                 
@@ -69,6 +69,13 @@
                     <div id="topbar-search-dropdown" class="dropdown-menu dropdown-menu-start shadow-lg border mt-2 p-0 w-100 overflow-hidden" style="display: none; min-width: 320px; max-height: 400px; overflow-y: auto; z-index: 1050;">
                         <div id="topbar-search-content" class="p-2"></div>
                     </div>
+                </li>
+
+                <!-- Quick Feedback Icon Button -->
+                <li class="d-none d-sm-flex me-1">
+                    <button type="button" class="btn nav-link text-primary" data-bs-toggle="modal" data-bs-target="#global-feedback-modal" title="Submit Feedback or Report Bug">
+                        <i class="mdi mdi-message-heart-outline fs-20 align-middle"></i>
+                    </button>
                 </li>
 
                 <!-- Theme Toggle (Dark/Light Mode) -->
@@ -139,6 +146,12 @@
                         <a href="{{ route('v1.profile.index') }}" class="dropdown-item notify-item">
                             <i class="mdi mdi-account-circle-outline fs-16 align-middle"></i>
                             <span>{{ __('messages.my_account') }}</span>
+                        </a>
+
+                        <!-- item-->
+                        <a href="{{ route('v1.tickets.index') }}" class="dropdown-item notify-item">
+                            <i class="mdi mdi-lifebuoy fs-16 align-middle"></i>
+                            <span>My Support Tickets</span>
                         </a>
 
                         <!-- item-->

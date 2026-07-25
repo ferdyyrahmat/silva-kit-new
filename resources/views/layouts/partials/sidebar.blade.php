@@ -32,6 +32,13 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{ route('v1.tickets.index') }}" class="tp-link">
+                        <i data-feather="life-buoy"></i>
+                        <span> My Support Tickets </span>
+                    </a>
+                </li>
+
                 @include('layouts.partials.sidebar.admin')
 
                 <li class="menu-title">Pages</li>

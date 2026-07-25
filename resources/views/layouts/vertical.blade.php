@@ -28,6 +28,7 @@
 
     </div>
 
+    @include('layouts.partials.global-feedback-modal')
     @include('layouts.partials.vendor')
 
 </body>
