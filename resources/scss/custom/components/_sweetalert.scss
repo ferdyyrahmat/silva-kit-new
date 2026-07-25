@@ -122,10 +122,16 @@
 }
 
 // Backdrop Blur & Overlay
-.swal2-container.swal2-backdrop-show,
-.swal2-container.swal2-nobackdrop {
+.swal2-container.swal2-backdrop-show:not(:has(.swal2-toast)),
+.swal2-container.swal2-nobackdrop:not(:has(.swal2-toast)) {
     background: rgba(15, 23, 42, 0.45) !important;
     backdrop-filter: blur(4px) !important;
+}
+
+// Toasts are non-blocking notifications. Never dim or blur the page behind them.
+.swal2-container:has(.swal2-toast) {
+    background: transparent !important;
+    backdrop-filter: none !important;
 }
 
 // Dark Mode Support for SweetAlert2
@@ -158,8 +164,12 @@
         }
     }
 
-    .swal2-container.swal2-backdrop-show,
-    .swal2-container.swal2-nobackdrop {
+    .swal2-container.swal2-backdrop-show:not(:has(.swal2-toast)),
+    .swal2-container.swal2-nobackdrop:not(:has(.swal2-toast)) {
         background: rgba(15, 23, 42, 0.75) !important;
+    }
+
+    .swal2-container:has(.swal2-toast) {
+        background: transparent !important;
     }
 }
