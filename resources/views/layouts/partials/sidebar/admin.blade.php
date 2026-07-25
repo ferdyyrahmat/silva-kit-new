@@ -55,6 +55,12 @@
     </a>
 </li>
 <li>
+    <a href="{{ route('admin.directory.index') }}" class="tp-link">
+        <i data-feather="folder"></i>
+        <span> Cloud Directory (MinIO) </span>
+    </a>
+</li>
+<li>
     <a href="{{ url('/api/documentation') }}" target="_blank" class="tp-link">
         <i data-feather="file-text"></i>
         <span> {{ __('messages.api_docs') }} </span>

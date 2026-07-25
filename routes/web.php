@@ -28,8 +28,15 @@ Route::middleware(['auth'])->prefix('notifications-bell')->name('notifications.b
     Route::post('clear-all', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'clearAll'])->name('clear');
 });
 Route::get('maintenance', function() {
-    return response()->view('error.maintenance');
+    return response()->view('errors.503');
 })->name('maintenance.page');
+
+Route::get('errors/{code}', function($code) {
+    if (view()->exists("errors.{$code}")) {
+        return response()->view("errors.{$code}");
+    }
+    abort((int) $code);
+})->name('error.show');
 
 Route::get('', [RoutingController::class, 'index'])->middleware(['auth'])->name('root');
 Route::prefix('v1')->name('v1.')->middleware(['auth'])->group(function () {

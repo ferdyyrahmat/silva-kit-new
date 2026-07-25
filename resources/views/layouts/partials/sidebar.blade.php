@@ -51,9 +51,12 @@
                     </a>
                     <div class="collapse" id="sidebarError">
                         <ul class="nav-second-level">
-                            <li>
-                                <a href="#" class="tp-link">Error 404</a>
-                            </li>
+                            <li><a href="{{ route('error.show', 401) }}" class="tp-link">Error 401</a></li>
+                            <li><a href="{{ route('error.show', 403) }}" class="tp-link">Error 403</a></li>
+                            <li><a href="{{ route('error.show', 404) }}" class="tp-link">Error 404</a></li>
+                            <li><a href="{{ route('error.show', 419) }}" class="tp-link">Error 419</a></li>
+                            <li><a href="{{ route('error.show', 500) }}" class="tp-link">Error 500</a></li>
+                            <li><a href="{{ route('error.show', 503) }}" class="tp-link">Error 503</a></li>
                         </ul>
                     </div>
                 </li>

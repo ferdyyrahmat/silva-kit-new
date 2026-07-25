@@ -4,9 +4,10 @@ namespace App\Http\Controllers\System\Backup;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ZipArchive;
 
 class BackupController extends Controller
@@ -22,49 +23,23 @@ class BackupController extends Controller
         $type = $request->input('type', 'db'); // 'db' or 'full'
 
         try {
-            // Attempt 1: Spatie Backup Package
-            if ($type === 'db') {
-                $exitCode = Artisan::call('backup:run', ['--only-db' => true]);
-            } else {
-                $exitCode = Artisan::call('backup:run');
-            }
+            $filePath = $this->createNativeBackup($type);
+            $fileName = basename($filePath);
 
-            if ($exitCode !== 0) {
-                // Attempt 2: Fallback native database SQL dumper
-                $this->createNativeDbBackup();
-            }
-
-            audit_log('Created system backup (' . strtoupper($type) . ')', 'create', 'backup');
-            send_notification('Backup Created', 'New system backup generated successfully.');
-
-            $msg = 'System backup created successfully!';
+            audit_log("Created system backup ({$type}): {$fileName}", 'create', 'backup');
+            send_notification('Backup Created', "New {$type} backup archive {$fileName} generated successfully.");
 
             return response()->json([
                 'success'  => true,
-                'message'  => $msg,
+                'message'  => "System backup archive {$fileName} created successfully!",
                 'redirect' => route('admin.backups.index')
             ]);
         } catch (\Throwable $e) {
-            // Fallback native dumper if Spatie fails on Windows
-            try {
-                $filePath = $this->createNativeDbBackup();
-                audit_log('Created native SQL fallback backup: ' . basename($filePath), 'create', 'backup');
-                send_notification('Backup Created', 'New database fallback backup archive generated.');
-
-                $msg = 'Backup archive generated successfully!';
-
-                return response()->json([
-                    'success'  => true,
-                    'message'  => $msg,
-                    'redirect' => route('admin.backups.index')
-                ]);
-            } catch (\Throwable $ex) {
-                return response()->json([
-                    'success'  => false,
-                    'message'  => 'Backup creation failed: ' . $ex->getMessage(),
-                    'redirect' => route('admin.backups.index')
-                ], 500);
-            }
+            return response()->json([
+                'success'  => false,
+                'message'  => 'Backup creation failed: ' . $e->getMessage(),
+                'redirect' => route('admin.backups.index')
+            ], 500);
         }
     }
 
@@ -73,18 +48,11 @@ class BackupController extends Controller
         $request->validate(['file' => 'required|string']);
         $fileName = basename($request->file);
 
-        // Search in local storage backup folder
-        $disk = Storage::disk('local');
-        $possiblePaths = [
-            'Silva-Kit/' . $fileName,
-            'backups/' . $fileName,
-            $fileName
-        ];
-
-        foreach ($possiblePaths as $path) {
-            if ($disk->exists($path)) {
+        $backupFiles = $this->getBackupFileList();
+        foreach ($backupFiles as $bf) {
+            if ($bf['name'] === $fileName && file_exists($bf['path'])) {
                 audit_log("Downloaded backup archive: {$fileName}", 'download', 'backup');
-                return $disk->download($path);
+                return response()->download($bf['path']);
             }
         }
 
@@ -94,17 +62,12 @@ class BackupController extends Controller
     public function destroy(Request $request, string $file)
     {
         $fileName = basename($file);
-        $disk = Storage::disk('local');
-        $possiblePaths = [
-            'Silva-Kit/' . $fileName,
-            'backups/' . $fileName,
-            $fileName
-        ];
+        $backupFiles = $this->getBackupFileList();
 
         $deleted = false;
-        foreach ($possiblePaths as $path) {
-            if ($disk->exists($path)) {
-                $disk->delete($path);
+        foreach ($backupFiles as $bf) {
+            if ($bf['name'] === $fileName && file_exists($bf['path'])) {
+                @unlink($bf['path']);
                 $deleted = true;
                 break;
             }
@@ -114,7 +77,7 @@ class BackupController extends Controller
             audit_log("Deleted backup archive: {$fileName}", 'delete', 'backup');
             return response()->json([
                 'success'  => true,
-                'message'  => 'Backup file deleted successfully.',
+                'message'  => "Backup file {$fileName} deleted successfully.",
                 'redirect' => route('admin.backups.index')
             ]);
         }
@@ -128,32 +91,49 @@ class BackupController extends Controller
 
     private function getBackupFileList(): array
     {
-        $disk = Storage::disk('local');
         $backupFiles = [];
+        $searchDirs = [
+            storage_path('app'),
+            storage_path('app/private'),
+            storage_path('app/public'),
+            storage_path('app/Silva-Kit'),
+            storage_path('app/private/Silva-Kit'),
+        ];
 
-        $directories = ['Silva-Kit', 'backups', ''];
-        foreach ($directories as $dir) {
-            $files = $disk->files($dir);
-            foreach ($files as $file) {
-                if (str_ends_with($file, '.zip')) {
-                    $fileName = basename($file);
-                    // Avoid duplicate listings
-                    $exists = false;
-                    foreach ($backupFiles as $bf) {
-                        if ($bf['name'] === $fileName) {
-                            $exists = true;
-                            break;
+        foreach ($searchDirs as $dir) {
+            if (!file_exists($dir)) continue;
+
+            try {
+                $iterator = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS)
+                );
+
+                foreach ($iterator as $file) {
+                    if ($file->isFile() && str_ends_with(strtolower($file->getFilename()), '.zip')) {
+                        $fileName = $file->getFilename();
+                        $filePath = $file->getPathname();
+
+                        // Avoid duplicate entries
+                        $exists = false;
+                        foreach ($backupFiles as $bf) {
+                            if ($bf['name'] === $fileName) {
+                                $exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!$exists) {
+                            $backupFiles[] = [
+                                'path'          => $filePath,
+                                'name'          => $fileName,
+                                'size_mb'       => round($file->getSize() / 1024 / 1024, 2),
+                                'last_modified' => date('Y-m-d H:i:s', $file->getMTime()),
+                            ];
                         }
                     }
-                    if (!$exists) {
-                        $backupFiles[] = [
-                            'path'          => $file,
-                            'name'          => $fileName,
-                            'size_mb'       => round($disk->size($file) / 1024 / 1024, 2),
-                            'last_modified' => date('Y-m-d H:i:s', $disk->lastModified($file)),
-                        ];
-                    }
                 }
+            } catch (\Throwable $e) {
+                // Ignore unreadable dirs
             }
         }
 
@@ -161,22 +141,21 @@ class BackupController extends Controller
         return $backupFiles;
     }
 
-    private function createNativeDbBackup(): string
+    private function createNativeBackup(string $type = 'db'): string
     {
         $tables = DB::select('SHOW TABLES');
-        $dbName = config('database.connections.mysql.database');
-        $key = 'Tables_in_' . $dbName;
-
         $sql = "-- Silva Kit Database Dump\n-- Generated: " . date('Y-m-d H:i:s') . "\n\n";
         $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
 
         foreach ($tables as $table) {
-            if (!isset($table->$key)) continue;
-            $tableName = $table->$key;
+            $val = array_values((array) $table);
+            if (empty($val[0])) continue;
+            $tableName = $val[0];
 
             $createTable = DB::select("SHOW CREATE TABLE `{$tableName}`");
+            $createTableVal = (array) $createTable[0];
             $sql .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
-            $sql .= $createTable[0]->{'Create Table'} . ";\n\n";
+            $sql .= array_values($createTableVal)[1] . ";\n\n";
 
             $rows = DB::table($tableName)->get();
             foreach ($rows as $row) {
@@ -193,8 +172,9 @@ class BackupController extends Controller
         $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
 
         $dateStr = date('Y-m-d-H-i-s');
-        $fileName = "silva-kit-backup-{$dateStr}.zip";
-        $dirPath = storage_path('app/Silva-Kit');
+        $fileName = "silva-kit-backup-{$type}-{$dateStr}.zip";
+        
+        $dirPath = storage_path('app/private/Silva-Kit');
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0755, true);
         }
@@ -202,7 +182,7 @@ class BackupController extends Controller
         $zipPath = $dirPath . '/' . $fileName;
         $zip = new ZipArchive();
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-            $zip->addFromString("db-dump-{$dateStr}.sql", $sql);
+            $zip->addFromString("database-dump-{$dateStr}.sql", $sql);
             $zip->close();
         }
 

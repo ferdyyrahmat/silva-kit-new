@@ -79,4 +79,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'check_permission'])
          Route::post('test', [\App\Http\Controllers\System\Setting\WebSocketSettingController::class, 'test'])->name('test');
       });
    });
+
+   Route::prefix('directory')->name('directory.')->group(function () {
+      Route::get('', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'index'])->name('index');
+      Route::post('upload', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'upload'])->name('upload');
+      Route::post('folder', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'makeFolder'])->name('folder');
+      Route::get('download', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'download'])->name('download');
+      Route::delete('destroy', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'destroy'])->name('destroy');
+      Route::post('settings', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'saveSettings'])->name('settings');
+   });
 });
