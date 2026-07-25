@@ -6,8 +6,8 @@ use App\Models\SystemNotification;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue::InteractsWithQueue;
-use Illuminate\Queue::SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class SendAsyncNotificationJob implements ShouldQueue
 {
