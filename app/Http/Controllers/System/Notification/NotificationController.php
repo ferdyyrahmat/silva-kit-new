@@ -83,6 +83,7 @@ class NotificationController extends Controller
             'message'     => 'required|string',
             'channels'    => 'required|array|min:1',
             'target_type' => 'required|in:all,role,user',
+            'target_id'   => 'nullable|integer',
             'type'        => 'required|in:info,success,warning,danger',
         ]);
 
@@ -93,6 +94,14 @@ class NotificationController extends Controller
         $message    = $request->input('message');
         $type       = $request->input('type');
         $url        = $request->input('url');
+
+        if ($targetType === 'role') {
+            $request->validate(['target_id' => 'required|exists:roles,id']);
+        } elseif ($targetType === 'user') {
+            $request->validate(['target_id' => 'required|exists:users,id']);
+        } else {
+            $targetId = null;
+        }
 
         // Determine target users query
         if ($targetType === 'role' && $targetId) {

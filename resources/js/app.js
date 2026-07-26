@@ -9,6 +9,9 @@ File: Main Js File
 import $ from 'jquery'
 window.jQuery = window.$ = $
 
+import 'select2';
+import 'select2/dist/css/select2.min.css';
+
 
 import bootstrap from 'bootstrap/dist/js/bootstrap.min';
 window.bootstrap = bootstrap;
@@ -181,3 +184,4 @@ class App {
 }
 
 new App().init();
+
