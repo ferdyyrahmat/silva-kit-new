@@ -11,13 +11,13 @@
                 @php
                     $hour = (int) date('H');
                     if ($hour >= 5 && $hour < 12) {
-                        $greeting = app()->getLocale() === 'id' ? 'Selamat Pagi' : 'Good Morning';
+                        $greeting = __('messages.good_morning');
                     } elseif ($hour >= 12 && $hour < 17) {
-                        $greeting = app()->getLocale() === 'id' ? 'Selamat Siang' : 'Good Afternoon';
+                        $greeting = __('messages.good_afternoon');
                     } elseif ($hour >= 17 && $hour < 19) {
-                        $greeting = app()->getLocale() === 'id' ? 'Selamat Sore' : 'Good Evening';
+                        $greeting = __('messages.good_evening');
                     } else {
-                        $greeting = app()->getLocale() === 'id' ? 'Selamat Malam' : 'Good Night';
+                        $greeting = __('messages.good_night');
                     }
                 @endphp
                 <li class="d-none d-lg-block">
@@ -129,7 +129,7 @@
                         </div>
 
                         <div class="noti-scroll" id="topbar-notifications-list" data-simplebar style="max-height: 300px; overflow-y: auto;">
-                            <div class="text-center py-3 text-muted fs-13">Loading notifications...</div>
+                            <div class="text-center py-3 text-muted fs-13">{{ __('messages.loading') }}</div>
                         </div>
 
                         <!-- All-->
@@ -163,7 +163,7 @@
                         <!-- item-->
                         <a href="{{ route('v1.tickets.index') }}" class="dropdown-item notify-item">
                             <i class="mdi mdi-lifebuoy fs-16 align-middle"></i>
-                            <span>My Support Tickets</span>
+                            <span>{{ __('messages.my_tickets') }}</span>
                         </a>
 
                         <!-- item-->

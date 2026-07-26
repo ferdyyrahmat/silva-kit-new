@@ -1,8 +1,8 @@
-@extends('layouts.vertical', ['title' => 'Database Management'])
+@extends('layouts.vertical', ['title' => __('messages.database_management')])
 
 @section('content')
 <div class="container-fluid">
-    <div class="py-3"><h4 class="fs-18 fw-semibold mb-1"><i class="mdi mdi-database-cog-outline me-1"></i>Database Management</h4><p class="text-muted mb-0">Developer-only tools for clearing application data.</p></div>
+    <div class="py-3"><h4 class="fs-18 fw-semibold mb-1"><i class="mdi mdi-database-cog-outline me-1"></i>{{ __('messages.database_management') }}</h4><p class="text-muted mb-0">{{ __('messages.developer_only_database_tools') }}</p></div>
 
     @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>@endif
     @if($errors->any())<div class="alert alert-danger">{{ $errors->first() }}</div>@endif
@@ -12,7 +12,7 @@
     <form method="POST" action="{{ route('admin.database.clear') }}" class="native-submit-form" id="database-clear-form">
         @csrf
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-transparent d-flex justify-content-between align-items-center"><h5 class="mb-0">Application tables</h5><label class="form-check mb-0"><input class="form-check-input" type="checkbox" id="select-all-tables"> <span class="form-check-label">Select all</span></label></div>
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center"><h5 class="mb-0">{{ __('messages.application_tables') }}</h5><label class="form-check mb-0"><input class="form-check-input" type="checkbox" id="select-all-tables"> <span class="form-check-label">{{ __('messages.select_all') }}</span></label></div>
             <div class="card-body p-0"><div class="list-group list-group-flush">@forelse($tables as $table)<label class="list-group-item d-flex align-items-center gap-3 py-3"><input class="form-check-input table-check m-0" type="checkbox" name="tables[]" value="{{ $table['name'] }}"><span class="fw-semibold flex-grow-1">{{ $table['name'] }}</span><span class="text-muted fs-12">{{ number_format($table['rows']) }} rows</span></label>@empty<div class="p-3 text-muted">No application tables found.</div>@endforelse</div></div>
             <div class="card-footer bg-transparent"><button type="button" class="btn btn-outline-danger" id="clear-selected"><i class="mdi mdi-delete-sweep-outline me-1"></i>Clear selected tables</button><button type="button" class="btn btn-danger float-end" id="clear-all"><i class="mdi mdi-database-remove-outline me-1"></i>Clear all application data</button></div>
         </div>
