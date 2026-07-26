@@ -1,6 +1,6 @@
 # 🎨 Silva Kit
 
-> A modern **Laravel 12** admin panel starter kit built with the [Silva Admin Template](https://zoyothemes.com/silva/html/) by Zoyothemes. Equipped with essential system modules, beautiful UI, and developer-friendly architecture — ready for rapid development.
+> A modern **Laravel 12** admin panel starter kit built with the [Silva Admin Template](https://zoyothemes.com/silva/html/) by Zoyothemes. Equipped with essential system modules, dynamic multi-role dashboards, user impersonation, ticketing, queue management, database tools, beautiful UI, and developer-friendly architecture — ready for rapid production development.
 
 ---
 
@@ -10,7 +10,8 @@
 |-------|-----------|
 | **Backend** | Laravel 12, PHP 8.2+ |
 | **Frontend** | Bootstrap 5.3, SCSS, Vite |
-| **Database** | MySQL / SQLite |
+| **Database** | MySQL 8.0 / SQLite |
+| **Object Storage** | MinIO (S3 Compatible Storage) |
 | **DataTables** | Yajra DataTables (Server-side) |
 | **UI Template** | Silva Admin by Zoyothemes |
 
@@ -23,7 +24,9 @@
 - PHP >= 8.2
 - Composer
 - Node.js >= 18 & npm
-- MySQL
+- MySQL 8.0
+
+---
 
 ### 🐳 Docker Quickstart (Recommended)
 
@@ -83,87 +86,102 @@ php artisan serve
 
 ---
 
+### 🔑 Default Credentials
+
+When running `php artisan db:seed` (or `RoleAndUserSeeder`), the system creates three default accounts:
+
+| Role | Email | Password | Access Level |
+|------|-------|----------|--------------|
+| **Developer** | `developer@example.com` | `password` | Full system access, developer tools, database manager, queue monitor |
+| **Administrator** | `admin@example.com` | `password` | System administration, user management, tickets, audit logs, settings |
+| **User** | `user@example.com` | `password` | Profile management, personal API tokens, support tickets |
+
+---
+
 ## 🌟 Global Features
 
-### 🔐 Authentication System
-- Login, Register, Logout
-- Lock Screen with session-based PIN
-- Password hashing with Bcrypt
+### 🔐 Authentication & OAuth 2FA System
+- Standard Login, Register, Password Reset, and Logout.
+- **Lock Screen**: Session-based lock screen requiring user password/PIN unlock.
+- **Two-Factor Authentication (2FA)**: TOTP Authenticator apps (Google Authenticator, Authy) with SVG QR code setup and emergency recovery codes.
+- **Socialite OAuth Login**: Seamless login with Google and GitHub accounts out-of-the-box.
 
-### 👤 User Profile Management
-- View & edit profile information (name, email, phone, location, avatar)
-- Change password with current password validation
-- Avatar upload with auto center-crop (1:1 circle)
-- Profile accessible to all authenticated users via `/v1/profile`
+### 🎭 User Impersonation System
+- Administrators can impersonate any registered user to inspect the system from their perspective.
+- **Sticky Impersonation Banner**: Top warning banner indicating active impersonation session with a quick "Stop Impersonating" button.
+
+### 🔒 Role & Permission System (with Locked Roles)
+- Dynamic route-based access control with custom `check_permission` middleware.
+- **Role Locking Protection**: System roles (e.g. Developer) can be locked to prevent accidental deletion or unauthorized attribute modification.
+- Complete CRUD interface for roles and permissions with group mapping.
+
+### 📊 Multi-Role Responsive Dashboards
+- Intelligent dashboard routing based on user role:
+  - **Developer Dashboard**: High-level system statistics, server environment info, database status, and developer quick links.
+  - **Admin Dashboard**: System metrics, user counts, ticket summaries, audit trail highlights, and health monitor cards.
+  - **User Dashboard**: Personal profile overview, active support tickets status, and recent notifications.
+
+### 🎟️ Support Ticket System & Developer Portal
+- **User Support Ticketing**: Users can create, view, reply to, and track support tickets.
+- **Admin & Developer Management**: Admins and developers can assign tickets to technical staff, update status (Open, In Progress, Resolved, Closed), and reply to user inquiries.
+
+### ⚡ Queue Manager & Job Monitor
+- Monitor pending and failed queue jobs via `/admin/queues`.
+- View exception details, retry individual failed jobs, or purge queue lists safely.
+
+### 📁 Directory & File Manager
+- Web-based Cloud / Local Storage File Manager accessible at `/admin/directory`.
+- Supports file uploads, folder creation, file deletion, zip archive downloading, and storage quota settings.
+
+### 🛠️ Database Management Tools
+- Dedicated developer database control view (`/admin/database`).
+- View table statistics, row counts, and execute database clearing or role/user re-seeding commands directly from the panel.
+
+### ⚙️ System Settings (Branding & WebSockets)
+- **Branding Settings**: Customize Application Name, Brand Logos, Favicon, and Footer copyright text.
+- **WebSocket Settings**: Configure Pusher / Laravel Reverb credentials with an interactive real-time connectivity tester.
+
+### 👤 User Profile & API Token Manager
+- Edit user details (Name, Email, Phone, Location, Avatar).
+- Auto center-crop avatar upload (1:1 circular ratio).
+- Change password with current password validation.
+- Manage **Sanctum Personal Access Tokens** (Generate, view, and revoke API tokens).
 
 ### 👥 User Management (Admin)
-- CRUD users with server-side DataTables
-- Assign roles & permissions to users
+- Server-side Yajra DataTables listing with search, sorting, and pagination.
+- Full user CRUD operations with role and permission assignments.
 
-### 🔑 Role & Permission System
-- Dynamic permission-based access control
-- Permission middleware (`check_permission`) on all admin routes
-- CRUD permissions via admin panel
-
-### 🌙 Dark Mode
-- Toggle between Light and Dark themes
-- Theme preference saved in session (persists across pages)
-- Fully styled dark mode across all components
-
-### 🌐 Multi-Language (i18n)
-- Switch between **Bahasa Indonesia (ID)** and **English (EN)**
-- Language toggle in topbar (click to switch, no dropdown)
-- Language preference saved in session
-- Translation files located in `lang/id/` and `lang/en/`
+### 🌙 Dark Mode & 🌐 Multi-Language (i18n)
+- **Dark Mode**: Seamless toggle between Light and Dark themes with session persistence.
+- **Multi-Language**: Click-to-toggle between **Bahasa Indonesia (ID)** and **English (EN)** in topbar. Translation files organized under `lang/id/` and `lang/en/`.
 
 ### 🔍 Global Search
-- Search bar in topbar with real-time AJAX suggestions
-- Searches across menu items and application pages
-- Click on a result to navigate directly to the page
-
-### 📊 DataTables Integration
-- Server-side rendering with Yajra DataTables
-- Supports sorting, pagination, and search
-- Responsive design for mobile devices
-
-### 🎨 SweetAlert2 Integration
-- Modern, themed alert dialogs matching the Silva template style
-- Used for confirmations, success messages, and error handling
-- Custom dark mode support
+- Real-time AJAX search bar in topbar matching routes, navigation menus, and system pages.
 
 ### 🔔 Notification Bell & Inbox System
-- Real-time bell notification updates with unread count badge & AJAX polling
-- Automatic notification trigger when administrator assigns/updates user roles
-- Interactive dropdown menu with single item removal (`x`) and **Clear All** action
-- Integrated **All Notifications Inbox** tab inside user profile page (`/v1/profile#tab-notifications`)
-- Global helper function `send_notification($title, $message, $url)` for effortless notification sending anywhere in the app
+- Real-time notification updates with unread count badge & AJAX polling.
+- **Notification Blast**: Broadcast system notifications to all users or specific roles (`/admin/notifications`).
+- Profile Inbox tab (`/v1/profile#tab-notifications`) and global helper function `send_notification($title, $message, $url)`.
 
-### 📜 Audit Trail System
-- Comprehensive activity logging for login/logout, user creation/updates, role assignments, password changes, and maintenance toggles
-- Dedicated DataTables view (`/admin/audit-logs`) for system administrators
-- Global helper function `audit_log($description)` with auto event-detection and actor mapping
+### 📜 Audit Trail Logging System
+- Automated logging for login/logout, user creation/updates, role modifications, impersonation events, and system settings changes.
+- View logs via `/admin/audit-logs` DataTables view or trigger via global helper `audit_log($description)`.
 
-### 🛠 Maintenance Mode
-- ON/OFF toggle switch for maintenance mode in settings panel
-- Customizable maintenance title and message information
-- Exclude/bypass **Administrator** role automatically
-- Non-authorized users will be presented with a beautiful, themed `pages-maintenance` view
-- Persisted dynamically in database utilizing `system_settings` table
-
-### 🛡️ Two-Factor Authentication (2FA) & Social Login
-- Two-Factor Authentication (2FA) via TOTP Authenticator apps (Google Authenticator / Authy) with SVG QR code rendering and emergency recovery codes
-- Socialite OAuth Login integration for Google and GitHub accounts
-
-### 🔑 API Engine & Swagger OpenAPI Documentation
-- Laravel Sanctum Personal Access Token Manager
-- Interactive OpenAPI / Swagger REST API documentation auto-generated at `/api/documentation`
+### 🛠️ Maintenance Mode
+- Toggle maintenance mode from settings with custom title and message.
+- Automatic bypass for users with the **Administrator** role.
+- Dynamic persistence using `system_settings` table.
 
 ### 📊 System Health Monitor Widget
-- Live server metrics card container on Admin Dashboard: Database latency check, MinIO Object Storage connection, RAM memory usage, Disk space capacity
+- Live server metrics card container on Admin Dashboard: Database latency, MinIO Object Storage status, RAM memory usage, and Disk space capacity.
 
 ### 💾 Automated Backup Engine
-- Database & asset backup management with MinIO S3 object storage synchronization via `spatie/laravel-backup`
-- Manual backup trigger & zip archive download from Admin Panel (`/admin/backups`)
+- Database & asset backup management with MinIO S3 object storage synchronization via `spatie/laravel-backup`.
+- Manual backup trigger & zip archive download from Admin Panel (`/admin/backups`).
+
+### 🔑 API Engine & Swagger OpenAPI Documentation
+- Laravel Sanctum token-authenticated REST API endpoint structure.
+- Interactive OpenAPI / Swagger REST API documentation generated at `/api/documentation`.
 
 ---
 
@@ -177,19 +195,25 @@ silva-kit-new/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Api/              # REST API & Swagger Controllers
-│   │   │   ├── Auth/             # Login, Register, Lockscreen, 2FA, Socialite OAuth
-│   │   │   ├── Dashboard/        # Dashboard controller
-│   │   │   └── System/           # System modules
-│   │   │       ├── AuditLog/     # Audit Trail controller
-│   │   │       ├── Backup/       # Backup Manager controller
-│   │   │       ├── Feedback/
-│   │   │       ├── Language/      # Language & Theme toggle
-│   │   │       ├── Maintenance/
-│   │   │       ├── Notification/ # Bell & Blast notification controllers
-│   │   │       ├── Permission/
-│   │   │       ├── Profile/       # Profile & Sanctum token controller
-│   │   │       ├── Search/        # Global search controller
-│   │   │       └── User/
+│   │   │   ├── Auth/             # Login, Register, Lockscreen, 2FA, Socialite, Impersonation
+│   │   │   ├── Dashboard/        # Role-based Dashboard controller
+│   │   │   ├── System/           # Admin system modules
+│   │   │   │   ├── AuditLog/     # Audit Trail controller
+│   │   │   │   ├── Backup/       # Backup Manager controller
+│   │   │   │   ├── Database/     # Database Management controller
+│   │   │   │   ├── Directory/    # File & Directory Manager controller
+│   │   │   │   ├── Feedback/     # Feedback controller
+│   │   │   │   ├── Language/     # Language & Theme toggle
+│   │   │   │   ├── Maintenance/  # Maintenance Mode controller
+│   │   │   │   ├── Notification/ # Bell & Blast notification controllers
+│   │   │   │   ├── Permission/   # Role & Permission controller (with locking)
+│   │   │   │   ├── Profile/      # Profile & Sanctum token controller
+│   │   │   │   ├── Queue/        # Queue Manager controller
+│   │   │   │   ├── Search/       # Global search controller
+│   │   │   │   ├── Setting/      # Branding & WebSocket settings controllers
+│   │   │   │   ├── Ticket/       # Admin & Developer ticket controllers
+│   │   │   │   └── User/         # Admin User CRUD controller
+│   │   │   └── User/             # User ticket controller
 │   │   └── Middleware/
 │   │       ├── CheckLockscreen.php
 │   │       ├── CheckMaintenanceMode.php
@@ -197,14 +221,22 @@ silva-kit-new/
 │   │       └── SetLocale.php
 │   ├── Models/
 │   │   ├── AuditLog.php
+│   │   ├── Developer.php
+│   │   ├── Feedback.php
+│   │   ├── NotificationBlast.php
 │   │   ├── Permission.php
 │   │   ├── Role.php
 │   │   ├── SystemNotification.php
 │   │   ├── SystemSetting.php
+│   │   ├── Ticket.php
+│   │   ├── TicketReply.php
 │   │   └── User.php
 │   └── Services/
 │       ├── SystemHealthService.php
 │       └── TwoFactorService.php
+├── database/
+│   ├── migrations/
+│   └── seeders/                  # DatabaseSeeder, RoleAndUserSeeder, UserSeeder, AdminSeeder
 ├── docker/
 │   ├── nginx/                    # Development & Production Nginx configurations
 │   ├── php/                      # Production OPcache configuration
@@ -212,26 +244,25 @@ silva-kit-new/
 │   ├── Dockerfile.prod
 │   ├── entrypoint.sh
 │   └── entrypoint.prod.sh
-├── database/
-│   ├── migrations/
-│   └── seeders/
 ├── lang/
 │   ├── en/                       # English translations
 │   └── id/                       # Indonesian translations
 ├── resources/
 │   ├── scss/                     # Custom SCSS styles
 │   └── views/
-│       ├── admin/                # Admin module views
+│       ├── admin/                # Admin module views (users, roles, tickets, queues, backups, directory, database)
 │       ├── auth/                 # Auth & 2FA challenge views
-│       └── layouts/              # Layout & partials
+│       ├── dashboard/            # Admin, Developer, and User dashboard views
+│       ├── errors/               # Custom error pages (503 maintenance, 404, etc.)
+│       └── layouts/              # Layouts & partials (sidebar, topbar, impersonation banner)
 ├── routes/
-│   ├── web.php                   # Main routes
+│   ├── web.php                   # Main routes & entry points
 │   ├── api.php                   # Sanctum API routes
-│   ├── auth.php                  # Auth & Socialite OAuth routes
+│   ├── auth.php                  # Auth, 2FA, & Socialite OAuth routes
 │   └── partials/
-│       ├── admin.php             # Admin-only routes
-│       └── user.php              # General user routes
-├── docker-compose.yml            # Development Docker setup (MySQL 8.0, MinIO, App, Web)
+│       ├── admin.php             # Admin & Developer protected routes
+│       └── user.php              # Authenticated user routes
+├── docker-compose.yml            # Development Docker setup (MySQL 8.0, MinIO, App, Nginx)
 ├── docker-compose.prod.yml       # Production Docker setup
 └── .env.docker.example           # Docker environment template
 ```
@@ -240,21 +271,21 @@ silva-kit-new/
 
 ## 🔄 Last Update
 
-**Date:** 24 July 2026
+**Date:** 26 July 2026
 
 ### ✨ What's New
-- ✅ **Docker Ready (Dev & Prod)** — Complete containerization with PHP 8.2-FPM, Nginx, MySQL 8.0, and MinIO Object Storage
-- ✅ **Two-Factor Authentication (2FA)** — TOTP QR code setup with Google Authenticator & recovery code verification challenge
-- ✅ **Socialite OAuth Login** — Sign in with Google & GitHub out-of-the-box
-- ✅ **Sanctum API Engine** — Personal Access Token generation & management
-- ✅ **Interactive OpenAPI / Swagger Docs** — Auto-generated REST API documentation at `/api/documentation`
-- ✅ **System Health Monitoring** — Live server metrics (DB latency, MinIO status, RAM, Disk usage) on Admin Dashboard
-- ✅ **Automated Backup Engine** — System backup manager with MinIO S3 sync & zip file downloads (`/admin/backups`)
-- ✅ **Dark Mode** — Full dark/light theme toggle with session persistence
-- ✅ **Multi-Language (i18n)** — ID/EN language switcher with click-to-toggle UI
-- ✅ **Notification Bell System** — Real-time notification updates for user role changes, profile updates, with unread count badge & inbox tab
-- ✅ **Audit Trail System** — Comprehensive activity logging for login/logout, user creation/updates, role assignments, and maintenance toggles with DataTables view (`/admin/audit-logs`)
-- ✅ **Maintenance Mode** — On/Off configuration settings panel allowing login gate bypass for **Administrator** role
+- ✅ **Database Management Tools** — Database table inspector, table cleaner/reset tools, and developer seeding triggers (`/admin/database`).
+- ✅ **User Impersonation** — Admin feature to switch views into any user context with top notification warning banner and quick exit control.
+- ✅ **Role Locking Protection** — Security enhancement to lock critical system roles (e.g. Developer, Admin) against unauthorized deletion.
+- ✅ **Multi-Role Dashboards** — Tailored dashboards for Admin, Developer, and User roles featuring system diagnostics, environment stats, and quick links.
+- ✅ **Support Ticket System** — Complete ticketing portal for users to submit issues and for admins/developers to reply and manage resolution workflow.
+- ✅ **Queue Manager & Worker Monitor** — Failed jobs viewer, manual retry trigger, and queue purge utilities (`/admin/queues`).
+- ✅ **Directory & File Storage Manager** — File manager tool supporting uploads, folder management, downloads, and storage usage stats (`/admin/directory`).
+- ✅ **System Branding & WebSocket Settings** — Panel tools for dynamic app title/logo/favicon configuration and real-time WebSocket connection testing (`/admin/settings`).
+- ✅ **Notification Blaster** — Send targeted broadcast notification messages to all users or specific role groups.
+- ✅ **Docker Ready (Dev & Prod)** — Complete containerized stack using PHP 8.2-FPM, Nginx, MySQL 8.0, and MinIO S3 Object Storage.
+- ✅ **Two-Factor Authentication (2FA) & Socialite** — TOTP authenticator setup with QR codes, recovery codes, and Google/GitHub OAuth integration.
+- ✅ **Sanctum API Engine & Swagger Docs** — Personal Access Token manager with auto-generated OpenAPI REST docs at `/api/documentation`.
 
 ---
 
