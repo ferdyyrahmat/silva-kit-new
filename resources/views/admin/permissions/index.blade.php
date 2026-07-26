@@ -41,6 +41,9 @@
                                 <th>{{ __('messages.description') }}</th>
                                 <th>{{ __('messages.roles_permissions') }}</th>
                                 <th>{{ __('messages.user') }}</th>
+                                @if(auth()->user()->isDeveloper())
+                                    <th>Lock Status</th>
+                                @endif
                                 <th>{{ __('messages.created_at') }}</th>
                                 <th class="text-center">{{ __('messages.actions') }}</th>
                             </tr>
@@ -75,6 +78,9 @@
                     { data: 'description', name: 'description' },
                     { data: 'permissions_count', name: 'permissions_count', orderable: false, searchable: false },
                     { data: 'users_count', name: 'users_count', orderable: false, searchable: false },
+                    @if(auth()->user()->isDeveloper())
+                    { data: 'lock_status', name: 'lock_status', orderable: false, searchable: false },
+                    @endif
                     { data: 'created_at', name: 'created_at' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
@@ -120,6 +126,24 @@
                     });
                 }
             })
+        }
+
+        function toggleRoleLock(id, locked) {
+            $.ajax({
+                url: "{{ url('admin/permissions') }}/" + id + "/lock",
+                type: 'PATCH',
+                data: { locked: locked ? 1 : 0 },
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}' },
+                success: function(response) {
+                    if (response.success) {
+                        $('#roles-datatable').DataTable().ajax.reload(null, false);
+                        Swal.fire({ toast: true, position: 'top-end', timer: 2500, showConfirmButton: false, icon: 'success', title: response.message });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire('Error!', xhr.responseJSON?.message || 'Unable to change role lock status.', 'error');
+                }
+            });
         }
     </script>
 @endsection

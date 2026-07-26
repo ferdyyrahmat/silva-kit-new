@@ -21,6 +21,10 @@ require __DIR__ . '/partials/user.php';
 Route::get('lang/{lang}', [App\Http\Controllers\System\Language\LanguageController::class, 'switchLang'])->name('lang.switch');
 Route::post('theme/toggle', [App\Http\Controllers\System\Language\LanguageController::class, 'toggleTheme'])->name('theme.toggle');
 Route::get('global-search', [App\Http\Controllers\System\Search\SearchController::class, 'search'])->middleware(['auth'])->name('global.search');
+Route::middleware(['auth'])->prefix('impersonation')->name('impersonation.')->group(function () {
+    Route::post('start/{user}', [App\Http\Controllers\Auth\ImpersonationController::class, 'start'])->name('start');
+    Route::post('stop', [App\Http\Controllers\Auth\ImpersonationController::class, 'stop'])->name('stop');
+});
 Route::middleware(['auth'])->prefix('notifications-bell')->name('notifications.bell.')->group(function () {
     Route::get('', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'getNotifications'])->name('index');
     Route::post('{id}/read', [App\Http\Controllers\System\Notification\NotificationBellController::class, 'markAsRead'])->name('read');

@@ -16,6 +16,8 @@
 
         <div class="content-page">
 
+            @include('layouts.partials.impersonation-banner')
+
             <div class="content">
 
                 @yield('content')

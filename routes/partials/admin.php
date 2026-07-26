@@ -17,6 +17,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'check_permission'])
       Route::get('{id}/edit', [App\Http\Controllers\System\Permission\PermissionController::class, 'edit'])->name('edit');
       Route::put('{id}/update', [App\Http\Controllers\System\Permission\PermissionController::class, 'update'])->name('update');
       Route::delete('{id}/destroy', [App\Http\Controllers\System\Permission\PermissionController::class, 'destroy'])->name('destroy');
+      Route::patch('{id}/lock', [App\Http\Controllers\System\Permission\PermissionController::class, 'toggleLock'])->name('lock');
    });
 
    Route::prefix('maintenance')->name('maintenance.')->group(function () {

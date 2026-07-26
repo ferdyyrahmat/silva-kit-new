@@ -11,7 +11,10 @@ class Role extends Model
         'name',
         'description',
         'guard_name',
+        'is_locked',
     ];
+
+    protected $casts = ['is_locked' => 'boolean'];
 
     public function permissions(): BelongsToMany
     {
@@ -21,5 +24,10 @@ class Role extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function isLocked(): bool
+    {
+        return (bool) $this->is_locked || strcasecmp($this->name, 'Developer') === 0;
     }
 }

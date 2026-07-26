@@ -80,6 +80,12 @@
     }
 
     $('form').on('submit', function(e) {
+        // Authentication/session transition forms must use the browser's native
+        // submit so their current CSRF token is sent with the active session.
+        if ($(this).hasClass('native-submit-form')) {
+            return true;
+        }
+
         e.preventDefault();
 
         // Disable tombol submit setelah form disubmit

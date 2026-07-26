@@ -70,7 +70,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">Role Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required value="{{ $role->name }}" placeholder="e.g. Administrator, Editor, Supervisor">
+                                <input type="text" class="form-control" id="name" name="name" required value="{{ $role->name }}" placeholder="e.g. Administrator, Editor, Supervisor" {{ $role->isLocked() ? 'readonly' : '' }}>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="description" class="form-label">Description</label>
@@ -161,6 +161,9 @@
         <div class="row mb-4">
             <div class="col-12 text-end">
                 <a href="{{ route('admin.permissions.index') }}" class="btn btn-light me-1">Cancel</a>
+                @if($role->isLocked())
+                    <span class="badge bg-warning-subtle text-warning me-2"><i class="mdi mdi-lock-outline me-1"></i>{{ $role->name }} locked for deletion</span>
+                @endif
                 <button type="submit" class="btn btn-primary">Update Role & Permissions</button>
             </div>
         </div>

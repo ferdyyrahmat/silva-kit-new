@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -42,8 +43,13 @@ class UserController extends Controller
                 ->addColumn('actions', function ($row) {
                     $editUrl = route('admin.users.edit', $row->id);
                     $deleteUrl = route('admin.users.destroy', $row->id);
+                    $impersonateUrl = route('impersonation.start', $row->id);
+                    $impersonateButton = auth()->user()->isDeveloper() && !$row->isDeveloper()
+                        ? '<form method="POST" action="' . $impersonateUrl . '" class="d-inline">' . csrf_field() . '<button type="submit" class="btn btn-sm btn-outline-info me-1" title="Impersonate"><i class="mdi mdi-account-switch-outline fs-16"></i></button></form>'
+                        : '';
                     return '
                         <div class="text-center">
+                            ' . $impersonateButton . '
                             <a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1" title="Edit">
                                 <i class="mdi mdi-square-edit-outline fs-16"></i>
                             </a>
@@ -62,7 +68,7 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all();
+        $roles = $this->visibleRoles();
         return view('admin.users.create', compact('roles'));
     }
 
@@ -82,8 +88,10 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $roleIds = $request->roles ?? [];
+        $this->guardDeveloperRoleAssignment($roleIds);
         if ($request->has('roles')) {
-            $user->roles()->sync($request->roles);
+            $user->roles()->sync($roleIds);
         }
 
         \App\Models\AuditLog::log('user.create', "Created user '{$user->name}' ({$user->email})", 'user', ['user_id' => $user->id]);
@@ -110,7 +118,7 @@ class UserController extends Controller
     {
         $user = User::with('roles')->findOrFail($id);
         $userRoleIds = $user->roles->pluck('id')->toArray();
-        $roles = Role::all();
+        $roles = $this->visibleRoles();
 
         return view('admin.users.edit', compact('user', 'userRoleIds', 'roles'));
     }
@@ -140,6 +148,13 @@ class UserController extends Controller
         $user->update($updateData);
 
         $newRoles = $request->roles ?? [];
+        $this->guardDeveloperRoleAssignment($newRoles);
+        if (!Auth::user()->isDeveloper()) {
+            $newRoles = array_unique(array_merge(
+                $newRoles,
+                Role::whereIn('id', $oldRoleIds)->whereRaw('LOWER(name) = ?', ['developer'])->pluck('id')->all()
+            ));
+        }
         $user->roles()->sync($newRoles);
 
         $user->load('roles');
@@ -180,5 +195,18 @@ class UserController extends Controller
             'message'  => 'User deleted successfully!',
             'redirect' => route('admin.users.index')
         ]);
+    }
+    private function visibleRoles()
+    {
+        return Auth::user()->isDeveloper()
+            ? Role::all()
+            : Role::whereRaw('LOWER(name) <> ?', ['developer'])->get();
+    }
+
+    private function guardDeveloperRoleAssignment(array $roleIds): void
+    {
+        if (!Auth::user()->isDeveloper() && Role::whereIn('id', $roleIds)->whereRaw('LOWER(name) = ?', ['developer'])->exists()) {
+            abort(403, 'Only developers can assign the Developer role.');
+        }
     }
 }

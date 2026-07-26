@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,6 +18,9 @@ class PermissionController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $query = Role::query()->withCount(['permissions', 'users']);
+            if (!Auth::user()->isDeveloper()) {
+                $query->whereRaw('LOWER(name) <> ?', ['developer']);
+            }
             
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -32,12 +36,28 @@ class PermissionController extends Controller
                 ->editColumn('users_count', function ($row) {
                     return '<span class="badge bg-light text-success fs-12">' . $row->users_count . ' Users</span>';
                 })
+                ->addColumn('lock_status', function ($row) {
+                    if (!Auth::user()->isDeveloper()) return '';
+                    return $row->isLocked()
+                        ? '<span class="badge bg-warning-subtle text-warning"><i class="mdi mdi-lock-outline me-1"></i>Locked</span>'
+                        : '<span class="badge bg-success-subtle text-success"><i class="mdi mdi-lock-open-outline me-1"></i>Unlocked</span>';
+                })
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '-';
                 })
                 ->addColumn('actions', function ($row) {
+                    if ($row->isLocked()) {
+                        $editUrl = route('admin.permissions.edit', $row->id);
+                        $unlock = Auth::user()->isDeveloper() && strcasecmp($row->name, 'Developer') !== 0
+                            ? '<button type="button" class="btn btn-sm btn-outline-warning" title="Unlock" onclick="toggleRoleLock(' . $row->id . ', false)"><i class="mdi mdi-lock-open-outline fs-16"></i></button>'
+                            : '';
+                        return '<div class="text-center"><a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1" title="Edit"><i class="mdi mdi-square-edit-outline fs-16"></i></a><span class="badge bg-warning-subtle text-warning me-1" title="Locked role"><i class="mdi mdi-lock-outline me-1"></i>Locked</span>' . $unlock . '</div>';
+                    }
                     $editUrl = route('admin.permissions.edit', $row->id);
                     $deleteUrl = route('admin.permissions.destroy', $row->id);
+                    $lock = Auth::user()->isDeveloper()
+                        ? '<button type="button" class="btn btn-sm btn-outline-warning" title="Lock" onclick="toggleRoleLock(' . $row->id . ', true)"><i class="mdi mdi-lock-outline fs-16"></i></button>'
+                        : '';
                     return '
                         <div class="text-center">
                             <a href="' . $editUrl . '" class="btn btn-sm btn-outline-primary me-1" title="Edit">
@@ -45,11 +65,12 @@ class PermissionController extends Controller
                             </a>
                             <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="deleteRole(' . $row->id . ', \'' . $deleteUrl . '\')">
                                 <i class="mdi mdi-trash-can-outline fs-16"></i>
-                            </button>
+                            </button>' . 
+                            $lock . '
                         </div>
                     ';
                 })
-                ->rawColumns(['name', 'permissions_count', 'users_count', 'actions'])
+                ->rawColumns(['name', 'permissions_count', 'users_count', 'lock_status', 'actions'])
                 ->make(true);
         }
         
@@ -59,7 +80,7 @@ class PermissionController extends Controller
     public function create()
     {
         $groupedRoutes = $this->getGroupedRoutes();
-        $users = User::all();
+        $users = $this->visibleUsers();
         return view('admin.permissions.create', compact('groupedRoutes', 'users'));
     }
 
@@ -127,10 +148,11 @@ class PermissionController extends Controller
     public function edit($id)
     {
         $role = Role::with('users')->findOrFail($id);
+        $this->ensureRoleVisible($role);
         $rolePermissions = $role->permissions->pluck('route_name')->toArray();
         $roleUserIds = $role->users->pluck('id')->toArray();
         $groupedRoutes = $this->getGroupedRoutes();
-        $users = User::all();
+        $users = $this->visibleUsers();
 
         return view('admin.permissions.edit', compact('role', 'rolePermissions', 'roleUserIds', 'groupedRoutes', 'users'));
     }
@@ -138,6 +160,7 @@ class PermissionController extends Controller
     public function update(Request $request, $id)
     {
         $role = Role::findOrFail($id);
+        $this->ensureRoleVisible($role);
 
         $request->validate([
             'name' => 'required|string|max:255|unique:roles,name,' . $id,
@@ -199,6 +222,8 @@ class PermissionController extends Controller
     public function destroy($id)
     {
         $role = Role::findOrFail($id);
+        $this->ensureRoleVisible($role);
+        abort_if($role->isLocked(), 403, 'The Developer role is locked and cannot be deleted.');
         $roleName = $role->name;
         $role->delete();
 
@@ -208,6 +233,21 @@ class PermissionController extends Controller
             'success'  => true,
             'message'  => 'Role deleted successfully!',
             'redirect' => route('admin.permissions.index')
+        ]);
+    }
+
+    public function toggleLock(Request $request, $id)
+    {
+        abort_unless(Auth::user()->isDeveloper(), 403);
+
+        $role = Role::findOrFail($id);
+        abort_if(strcasecmp($role->name, 'Developer') === 0, 403, 'The Developer role is always locked.');
+
+        $role->update(['is_locked' => $request->boolean('locked')]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $role->is_locked ? "Role '{$role->name}' locked." : "Role '{$role->name}' unlocked.",
         ]);
     }
 
@@ -246,5 +286,19 @@ class PermissionController extends Controller
         }
         ksort($groupedRoutes);
         return $groupedRoutes;
+    }
+
+    private function ensureRoleVisible(Role $role): void
+    {
+        if ($role->isLocked() && !Auth::user()->isDeveloper()) {
+            abort(404);
+        }
+    }
+
+    private function visibleUsers()
+    {
+        return Auth::user()->isDeveloper()
+            ? User::all()
+            : User::whereDoesntHave('roles', fn ($query) => $query->whereRaw('LOWER(name) = ?', ['developer']))->get();
     }
 }
