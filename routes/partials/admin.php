@@ -86,4 +86,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'check_permission'])
       Route::delete('destroy', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'destroy'])->name('destroy');
       Route::post('settings', [\App\Http\Controllers\System\Directory\DirectoryController::class, 'saveSettings'])->name('settings');
    });
+
+   Route::prefix('database')->name('database.')->group(function () {
+      Route::get('', [\App\Http\Controllers\System\Database\DatabaseManagementController::class, 'index'])->name('index');
+      Route::post('clear', [\App\Http\Controllers\System\Database\DatabaseManagementController::class, 'clear'])->name('clear');
+   });
 });

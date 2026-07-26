@@ -45,6 +45,15 @@
     <li class="menu-title">{{ __('messages.system_management') }}</li>
 @endif
 
+@if($isDeveloper)
+<li>
+    <a href="{{ route('admin.database.index') }}" class="tp-link">
+        <i data-feather="database"></i>
+        <span> Database Management </span>
+    </a>
+</li>
+@endif
+
 {{-- ═══════════════════════════════════════════════════ --}}
 {{-- ACCESS CONTROL: Roles & Permissions, User Management --}}
 {{-- ═══════════════════════════════════════════════════ --}}

@@ -12,6 +12,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(100)->create();
+        // Dummy role users are seeded by RoleAndUserSeeder.
     }
 }
